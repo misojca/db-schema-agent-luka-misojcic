@@ -1,0 +1,29 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.dbmdl
+*.jfm
+
+# EF Core migrations temp
+*.Designer.cs
+
+# Environment
+.env
+.env.local
+appsettings.Development.json
+
+# Node/Python tools
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kiro
+.kiro/cache/
