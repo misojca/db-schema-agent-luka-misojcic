@@ -87,40 +87,217 @@ Before generating anything, classify the change:
 For Risky changes: generate expand-contract migration (two steps).
 For Destructive changes: refuse and explain why, propose a safe alternative.
 
-## TODO: Add Naming Conventions
+## Naming Conventions
 
-<!-- Fill in:
-     - PostgreSQL column naming: snake_case
-     - C# class naming: PascalCase
-     - C# property naming: PascalCase
-     - Migration naming convention: e.g. Add<TableName>, Alter<Table>_<Column>
-     - Configuration class naming: <EntityName>Configuration
-     - Namespace conventions for Domain and Infrastructure projects
--->
+### PostgreSQL (database level)
+- Tables: `snake_case` (e.g. `purchase_order_detail`)
+- Columns: `snake_case` (e.g. `unit_price`, `order_qty`)
+- FK columns: referenced table name + `id` (e.g. `purchase_order_id`)
+- Indexes: `IX_<table>_<column>` (e.g. `IX_purchase_order_detail_product_id`)
+- Primary key constraints: `PK_<Schema>_<Table>` (e.g. `PK_Purchasing_PurchaseOrderDetail`)
+- FK constraints: `FK_<Table>_<RefTable>_<Column>` (e.g. `FK_PurchaseOrderDetail_PurchaseOrderHeader_PurchaseOrderID`)
 
-## TODO: Add Expand-Contract Pattern Template
+### C# classes (Domain project)
+- Entity classes: `PascalCase` (e.g. `PurchaseOrderDetail`)
+- Properties: `PascalCase` (e.g. `UnitPrice`, `OrderQty`)
+- Namespace: `AdventureWorks.Domain.<Schema>.Entities`
+  (e.g. `AdventureWorks.Domain.Purchasing.Entities`)
 
-<!-- Fill in the exact template for two-phase migrations:
-     Phase 1 (expand): add new structure, keep old
-     Phase 2 (contract): remove old structure after data migration
-     Include the C# migration template with Up() and Down() methods
--->
+### C# configurations (Infrastructure project)
+- Class name: `<EntityName>Configuration` (e.g. `PurchaseOrderDetailConfiguration`)
+- Namespace: `AdventureWorks.Infrastructure.Persistence.Configurations`
+- Implements: `IEntityTypeConfiguration<TEntity>`
 
-## TODO: Add Mermaid ER Diagram Template
+### Migrations
+- Format: `<Action><Target>` in PascalCase
+  - New table: `AddPurchaseOrderDetail`
+  - New column: `AddWeightKgToProduct`
+  - Type change: `AlterCurrencyRateAverageRateType`
+  - Split table: `SplitAddressToAddressAndAddressDetail`
+  - Merge tables: `MergeEmployeePayHistory`
 
-<!-- Fill in the Mermaid erDiagram syntax template
-     Show how to represent: tables, columns with types, FK relationships
-     Example for a new table being added to purchasing schema
--->
+## Expand-Contract Pattern Template
 
-## TODO: Add Feedback Loop Rules
+Use this two-phase approach for all Risky changes (column type changes,
+splitting tables, merging tables). Never make breaking changes in a single
+migration.
 
-<!-- Fill in rules for when TDD tests fail due to schema issues:
-     - How to receive the error report from TDD agent
-     - Maximum iterations before escalating to human (max 3)
-     - What to check: FK constraints, column types, nullable mismatches
-     - How to format the correction migration
--->
+### Phase 1 — Expand (add new, keep old)
+
+```csharp
+public partial class AlterExampleExpandPhase : Migration
+{
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        // Add new column/table alongside the existing one
+        migrationBuilder.AddColumn<decimal>(
+            name: "new_column",
+            schema: "sales",
+            table: "example_table",
+            type: "numeric(19,4)",
+            nullable: true);  // nullable during transition
+
+        // Copy data from old to new
+        migrationBuilder.Sql(@"
+            UPDATE sales.example_table
+            SET new_column = CAST(old_column AS numeric(19,4))
+            WHERE old_column IS NOT NULL;
+        ");
+    }
+
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            name: "new_column",
+            schema: "sales",
+            table: "example_table");
+    }
+}
+```
+
+### Phase 2 — Contract (remove old, finalize new)
+
+```csharp
+public partial class AlterExampleContractPhase : Migration
+{
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        // Make new column NOT NULL after data is migrated
+        migrationBuilder.AlterColumn<decimal>(
+            name: "new_column",
+            schema: "sales",
+            table: "example_table",
+            type: "numeric(19,4)",
+            nullable: false,
+            oldClrType: typeof(decimal),
+            oldNullable: true);
+
+        // Remove old column
+        migrationBuilder.DropColumn(
+            name: "old_column",
+            schema: "sales",
+            table: "example_table");
+    }
+
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        // Restore old column (data loss accepted on rollback)
+        migrationBuilder.AddColumn<float>(
+            name: "old_column",
+            schema: "sales",
+            table: "example_table",
+            nullable: true);
+    }
+}
+```
+
+### Rules for expand-contract
+- Phase 1 and Phase 2 are always separate migration files
+- Always verify data integrity between Phase 1 and Phase 2
+- Phase 1 migration name: `Alter<Table>_<Column>_ExpandPhase`
+- Phase 2 migration name: `Alter<Table>_<Column>_ContractPhase`
+- Never run Phase 2 without confirming Phase 1 data migration succeeded
+- If Phase 2 Down() runs, data in old column is lost — document this explicitly
+
+## Mermaid ER Diagram Template
+
+After every successful migration, generate a Mermaid ER diagram showing
+the new or modified tables and their relationships. Save it to:
+`agent/diagrams/<scenario-name>.mmd`
+
+### Basic template
+erDiagram
+    PURCHASE_ORDER_HEADER {
+        int purchaseorderid PK
+        int vendorid FK
+        int shipmethodid FK
+        date orderdate
+        numeric totaldue
+    }
+
+    PURCHASE_ORDER_DETAIL {
+        int purchaseorderdetailid PK
+        int purchaseorderid FK
+        int productid FK
+        int orderqty
+        numeric unitprice
+        numeric linetotal
+        date duedate
+    }
+
+    VENDOR {
+        int businessentityid PK
+        string accountnumber
+        string name
+    }
+
+    PURCHASE_ORDER_HEADER ||--o{ PURCHASE_ORDER_DETAIL : "has"
+    VENDOR ||--o{ PURCHASE_ORDER_HEADER : "receives"
+
+### Rules for ER diagrams
+- Show only the tables directly affected by the migration
+- Always show FK relationships with cardinality
+- Use UPPER_SNAKE_CASE for table names in the diagram
+- Use lowercase for column names
+- Mark PK and FK columns explicitly
+- For cross-schema relationships, prefix table name with schema:
+  SALES__CUSTOMER (double underscore = schema separator)
+- For expand-contract migrations, show both phases:
+  - Phase 1: show old and new column in same table
+  - Phase 2: show final state after old column removed
+- File naming: <scenario-number>-<scenario-name>.mmd
+  (e.g. 01-add-purchase-order-detail.mmd)
+
+## Feedback Loop Rules
+
+When a TDD agent test fails due to a schema issue, follow this protocol.
+
+### Receiving the error report
+
+The TDD agent will provide an error in this format:
+- Test name (includes Story/Scenario ID)
+- Error message (e.g. column does not exist, FK violation, type mismatch)
+- Stack trace pointing to the failing assertion
+
+### Error classification
+
+| Error type | Likely cause | Action |
+|---|---|---|
+| column does not exist | Column missing or wrong name | Check HasColumnName() mapping |
+| FK violation | Missing FK constraint or wrong reference | Check FK configuration |
+| type mismatch | C# type vs PostgreSQL type incompatible | Generate expand-contract migration |
+| nullable constraint | NOT NULL column missing DEFAULT | Add DEFAULT or make nullable |
+| relation does not exist | Wrong schema or table name | Check ToTable("name", "schema") |
+
+### Iteration protocol
+
+For each failing test, follow this exact sequence:
+
+1. Read the error message carefully
+2. Read the current migration file
+3. Read the current entity configuration
+4. Identify the root cause
+5. Generate a correction migration
+6. Run round-trip test (apply, rollback, re-apply)
+7. Report: what was wrong, what was fixed, sensor result
+
+### Hard limits
+
+- Maximum 3 iterations per failing test
+- After iteration 3, if the test still fails:
+  - Stop
+  - Report to human with full diagnostic:
+    - Original error
+    - All attempted fixes
+    - Current state of migration
+    - Recommended manual intervention
+- Never silently skip a failing test
+- Never mark a scenario as complete while any test is red
+
+### Correction migration naming
+
+- Format: Fix<OriginalMigrationName>_Iteration<N>
+- Example: FixAddPurchaseOrderDetail_Iteration1
 
 ## Folder Structure
 
