@@ -1,0 +1,24 @@
+{
+  "name": "db-agent",
+  "description": "DB Schema Agent — generates EF Core entity classes, Fluent API configurations, and PostgreSQL migrations for AdventureWorks database evolution",
+  "prompt": "file://./db-agent-prompt.md",
+  "tools": [
+    "fs_read",
+    "fs_write",
+    "shell"
+  ],
+  "allowedTools": [
+    "fs_read"
+  ],
+  "resources": [
+    "file://docs/adventureworks-architecture/**/*.md"
+  ],
+  "hooks": {
+    "postToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": "echo '🔍 File written — running round-trip migration test...' && cd demo && dotnet ef database update --project src/AdventureWorks.Infrastructure/AdventureWorks.Infrastructure.csproj --startup-project src/AdventureWorks.Api/AdventureWorks.Api.csproj 2>&1 | tail -5"
+      }
+    ]
+  }
+}
