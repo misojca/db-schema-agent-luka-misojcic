@@ -1,0 +1,43 @@
+erDiagram
+    PRODUCTION__PRODUCT {
+        int productid PK
+        varchar name
+        varchar productnumber
+        boolean makeflag
+        boolean finishedgoodsflag
+        varchar color
+        smallint safetystocklevel
+        smallint reorderpoint
+        numeric standardcost
+        numeric listprice
+        varchar size
+        char sizeunitmeasurecode
+        char weightunitmeasurecode
+        numeric weight
+        int daystomanufacture
+        char productline
+        char class
+        char style
+        int productsubcategoryid FK
+        int productmodelid FK
+        timestamp sellstartdate
+        timestamp sellenddate
+        timestamp discontinueddate
+        uuid rowguid
+        timestamp modifieddate
+        numeric weight_kg "NEW — issue #3, nullable, default 0.0"
+    }
+
+    PRODUCTION__PRODUCTSUBCATEGORY {
+        int productsubcategoryid PK
+        int productcategoryid FK
+        varchar name
+    }
+
+    PRODUCTION__PRODUCTMODEL {
+        int productmodelid PK
+        varchar name
+    }
+
+    PRODUCTION__PRODUCTSUBCATEGORY ||--o{ PRODUCTION__PRODUCT : "classifies"
+    PRODUCTION__PRODUCTMODEL ||--o{ PRODUCTION__PRODUCT : "describes"

@@ -1,3 +1,7 @@
+using AdventureWorks.Domain.HumanResources.Entities;
+using AdventureWorks.Domain.Loyalty.Entities;
+using AdventureWorks.Domain.Production.Entities;
+using AdventureWorks.Domain.Purchasing.Entities;
 using AdventureWorks.Domain.Sales.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +15,10 @@ public class AdventureWorksDbContext : DbContext
     }
 
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<LoyaltyAccount> LoyaltyAccounts => Set<LoyaltyAccount>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<PurchaseOrderDetail> PurchaseOrderDetails => Set<PurchaseOrderDetail>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
