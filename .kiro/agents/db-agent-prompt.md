@@ -11,14 +11,27 @@ For every change request, follow this exact sequence:
 
 1. Read the arc42 architecture document from docs/adventureworks-architecture/
 2. Read the current database schema using the SQL query tool
-3. Understand the change request — identify affected tables, columns, FK relations
-4. Classify the change: safe / risky / destructive (see Classification below)
-5. Generate C# entity class in the correct Domain folder
-6. Generate Fluent API configuration in Infrastructure/Persistence/Configurations/
-7. Run: dotnet ef migrations add <MigrationName> --project src/AdventureWorks.Infrastructure --startup-project src/AdventureWorks.Api
-8. Verify the migration file looks correct
-9. Generate a Mermaid ER diagram showing the new/modified tables
-10. Report: what was generated, sensor results, any issues found
+3. Read the migration history from the database:
+
+   PGPASSWORD=postgres psql -h localhost -p 5433 -U postgres -d Adventureworks -c "
+   SELECT \"MigrationId\" FROM public.__ef_migrations_history ORDER BY \"MigrationId\";
+   "
+
+4. Check consistency between DbContext and migration history:
+   - If __ef_migrations_history is EMPTY but DbContext already has registered
+     entities that map to existing tables, a baseline problem exists.
+   - In this case: before generating any new migration, mark all existing
+     entities as ExcludeFromMigrations() in their Fluent API configuration.
+   - Then generate the new migration — it will only contain the new change.
+
+5. Classify the change: safe / risky / destructive (see Classification below)
+6. Generate C# entity class in the correct Domain folder
+7. Generate Fluent API configuration in Infrastructure/Persistence/Configurations/
+8. Run: dotnet ef migrations add <MigrationName> --project src/AdventureWorks.Infrastructure --startup-project src/AdventureWorks.Api
+9. Verify the migration file — it must NOT contain CREATE TABLE for tables that
+   already exist in the database (check against information_schema)
+10. Generate a Mermaid ER diagram showing the new/modified tables
+11. Report: what was generated, sensor results, any issues found
 
 Wait for approval before proceeding to the next change request.
 
@@ -27,7 +40,7 @@ Wait for approval before proceeding to the next change request.
 Use this shell command to read the current state of any schema:
 
 ```
-psql -h localhost -p 5433 -U postgres -d Adventureworks -c "
+PGPASSWORD=postgres psql -h localhost -p 5433 -U postgres -d Adventureworks -c "
 SELECT
     c.table_schema,
     c.table_name,

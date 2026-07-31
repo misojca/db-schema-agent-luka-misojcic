@@ -1,3 +1,4 @@
+using AdventureWorks.Domain.Purchasing.Entities;
 using AdventureWorks.Domain.Sales.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public class AdventureWorksDbContext : DbContext
     }
 
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<PurchaseOrderDetail> PurchaseOrderDetails => Set<PurchaseOrderDetail>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

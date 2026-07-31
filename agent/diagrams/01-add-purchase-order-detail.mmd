@@ -1,0 +1,48 @@
+erDiagram
+    PURCHASING__PURCHASEORDERHEADER {
+        int purchaseorderid PK
+        int vendorid FK
+        int shipmethodid FK
+        int employeeid FK
+        smallint revisionnumber
+        smallint status
+        timestamp orderdate
+        timestamp shipdate
+        numeric subtotal
+        numeric taxamt
+        numeric freight
+        timestamp modifieddate
+    }
+
+    PURCHASING__PURCHASEORDERDETAIL {
+        int purchaseorderid PK_FK
+        int purchaseorderdetailid PK
+        timestamp duedate
+        smallint orderqty
+        int productid FK
+        numeric unitprice
+        numeric receivedqty
+        numeric rejectedqty
+        timestamp modifieddate
+    }
+
+    PURCHASING__VENDOR {
+        int businessentityid PK
+        varchar accountnumber
+        varchar name
+        smallint creditrating
+        boolean preferredvendorstatus
+        boolean activeflag
+    }
+
+    PRODUCTION__PRODUCT {
+        int productid PK
+        varchar name
+        varchar productnumber
+        numeric standardcost
+        numeric listprice
+    }
+
+    PURCHASING__PURCHASEORDERHEADER ||--o{ PURCHASING__PURCHASEORDERDETAIL : "contains"
+    PURCHASING__VENDOR ||--o{ PURCHASING__PURCHASEORDERHEADER : "receives"
+    PRODUCTION__PRODUCT ||--o{ PURCHASING__PURCHASEORDERDETAIL : "ordered as"
