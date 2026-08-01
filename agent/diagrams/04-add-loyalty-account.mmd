@@ -1,0 +1,19 @@
+erDiagram
+    LOYALTY__LOYALTYACCOUNT {
+        int loyaltyaccountid PK
+        int customerid FK
+        int points_balance
+        timestamp created_at
+        timestamp modified_at
+    }
+
+    SALES__CUSTOMER {
+        int customerid PK
+        int personid FK
+        int storeid FK
+        int territoryid FK
+        uuid rowguid
+        timestamp modifieddate
+    }
+
+    SALES__CUSTOMER ||--o| LOYALTY__LOYALTYACCOUNT : "has loyalty account"
