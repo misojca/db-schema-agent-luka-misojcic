@@ -282,6 +282,31 @@ The TDD agent will provide an error in this format:
 | nullable constraint | NOT NULL column missing DEFAULT | Add DEFAULT or make nullable |
 | relation does not exist | Wrong schema or table name | Check ToTable("name", "schema") |
 
+## Round-Trip Test Procedure
+
+After generating a migration, always run the round-trip test in this order:
+
+Step 1 — Apply:
+dotnet ef database update
+  --project src/AdventureWorks.Infrastructure
+  --startup-project src/AdventureWorks.Api
+
+Step 2 — Rollback (revert to before this migration):
+dotnet ef database update 0
+  --project src/AdventureWorks.Infrastructure
+  --startup-project src/AdventureWorks.Api
+
+Step 3 — Re-apply:
+dotnet ef database update
+  --project src/AdventureWorks.Infrastructure
+  --startup-project src/AdventureWorks.Api
+
+IMPORTANT:
+- Never use "migrations remove --force" for round-trip testing
+- "migrations remove" deletes the migration FILE from disk
+- "database update 0" only reverts the database, keeps the file intact
+- Only commit after all 3 steps pass successfully
+
 ### Iteration protocol
 
 For each failing test, follow this exact sequence:
