@@ -22,47 +22,6 @@ namespace AdventureWorks.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AdventureWorks.Domain.Loyalty.Entities.LoyaltyAccount", b =>
-                {
-                    b.Property<int>("LoyaltyAccountId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("loyaltyaccountid");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LoyaltyAccountId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer")
-                        .HasColumnName("customerid");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("modified_at")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<int>("PointsBalance")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("points_balance");
-
-                    b.HasKey("LoyaltyAccountId")
-                        .HasName("PK_Loyalty_LoyaltyAccount");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_loyaltyaccount_customerid");
-
-                    b.ToTable("loyaltyaccount", "loyalty");
-                });
-
             modelBuilder.Entity("AdventureWorks.Domain.Production.Entities.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -246,6 +205,49 @@ namespace AdventureWorks.Infrastructure.Migrations
                         {
                             t.ExcludeFromMigrations();
                         });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.CurrencyRate", b =>
+                {
+                    b.Property<int>("CurrencyRateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("currencyrateid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CurrencyRateId"));
+
+                    b.Property<decimal>("AverageRate")
+                        .HasColumnType("numeric")
+                        .HasColumnName("averagerate");
+
+                    b.Property<DateTime>("CurrencyRateDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("currencyratedate");
+
+                    b.Property<decimal>("EndOfDayRate")
+                        .HasColumnType("numeric")
+                        .HasColumnName("endofdayrate");
+
+                    b.Property<string>("FromCurrencyCode")
+                        .IsRequired()
+                        .HasColumnType("character")
+                        .HasColumnName("fromcurrencycode");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("ToCurrencyCode")
+                        .IsRequired()
+                        .HasColumnType("character")
+                        .HasColumnName("tocurrencycode");
+
+                    b.HasKey("CurrencyRateId")
+                        .HasName("PK_Sales_CurrencyRate");
+
+                    b.ToTable("currencyrate", "sales");
                 });
 
             modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.Customer", b =>
