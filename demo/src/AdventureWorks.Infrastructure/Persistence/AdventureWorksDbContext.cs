@@ -1,3 +1,4 @@
+using AdventureWorks.Domain.HumanResources.Entities;
 using AdventureWorks.Domain.Loyalty.Entities;
 using AdventureWorks.Domain.Person.Entities;
 using AdventureWorks.Domain.Purchasing.Entities;
@@ -18,6 +19,7 @@ public class AdventureWorksDbContext : DbContext
     public DbSet<LoyaltyAccount> LoyaltyAccounts => Set<LoyaltyAccount>();
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<AddressDetail> AddressDetails => Set<AddressDetail>();
+    public DbSet<Employee> Employees => Set<Employee>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
