@@ -1,0 +1,42 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-08 15:57:29
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: loyalty
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: person
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: production
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: purchasing
+----------------------------------------
+  ⚠️  TABLE DRIFT: 'purchaserequest' exists in DB but NOT in arc42
+       Columns: purchaserequestid, employeeid, productid, quantity, requestdate ... (+2 more)
+
+SCHEMA: sales
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       5
+  Drift detected:      1
+
+  ⚠️  1 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================

@@ -1,0 +1,28 @@
+erDiagram
+    SPECIAL_OFFER {
+        int specialofferid PK
+        varchar description
+        numeric discountpct
+        varchar type
+        varchar category
+        timestamp startdate
+        timestamp enddate
+        int minqty
+        int maxqty
+        uuid rowguid
+        timestamp modifieddate
+        numeric(5_2) discount_percentage "NEW — nullable, DEFAULT 0.0"
+    }
+
+    SPECIAL_OFFER_PRODUCT {
+        int specialofferid FK
+        int productid FK
+    }
+
+    SALES__PRODUCT {
+        int productid PK
+        varchar name
+    }
+
+    SPECIAL_OFFER ||--o{ SPECIAL_OFFER_PRODUCT : "applies to"
+    SALES__PRODUCT ||--o{ SPECIAL_OFFER_PRODUCT : "covered by"

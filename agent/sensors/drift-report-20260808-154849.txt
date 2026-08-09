@@ -1,0 +1,41 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-08 15:48:49
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: loyalty
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: person
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: production
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: purchasing
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: sales
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       0
+  Drift detected:      6
+
+  ⚠️  6 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================

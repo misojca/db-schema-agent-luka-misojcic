@@ -1,0 +1,27 @@
+erDiagram
+    PURCHASING__PURCHASE_REQUEST {
+        int purchaserequestid PK
+        int employeeid FK
+        int productid FK
+        smallint quantity
+        timestamp requestdate "DEFAULT now()"
+        varchar(20) status "DEFAULT 'pending'"
+        text notes "nullable"
+    }
+
+    HUMANRESOURCES__EMPLOYEE {
+        int businessentityid PK
+        varchar nationalidnumber
+        varchar jobtitle
+        date hiredate
+    }
+
+    PRODUCTION__PRODUCT {
+        int productid PK
+        varchar name
+        varchar productnumber
+        numeric listprice
+    }
+
+    HUMANRESOURCES__EMPLOYEE ||--o{ PURCHASING__PURCHASE_REQUEST : "submits"
+    PRODUCTION__PRODUCT ||--o{ PURCHASING__PURCHASE_REQUEST : "requested in"

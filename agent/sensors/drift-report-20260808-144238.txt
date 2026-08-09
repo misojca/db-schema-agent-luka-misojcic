@@ -1,0 +1,134 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-08 14:42:38
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'department.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'employee.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'employee.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'employeedepartmenthistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'employeepayhistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'jobcandidate.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'shift.modifieddate' exists in DB but NOT in arc42
+
+SCHEMA: loyalty
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: person
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'address.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'address.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'addresstype.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'addresstype.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentity.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentity.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentityaddress.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentityaddress.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentitycontact.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'businessentitycontact.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'contacttype.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'countryregion.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'emailaddress.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'emailaddress.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'password.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'password.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'person.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'person.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'personphone.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'phonenumbertype.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'stateprovince.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'stateprovince.rowguid' exists in DB but NOT in arc42
+
+SCHEMA: production
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'billofmaterials.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'culture.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'document.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'document.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'illustration.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'location.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'product.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'product.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productcategory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productcategory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productcosthistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productdescription.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productdescription.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productdocument.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productinventory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productinventory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productlistpricehistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productmodel.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productmodel.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productmodelillustration.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productmodelproductdescriptionculture.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productphoto.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productproductphoto.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productreview.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productsubcategory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'productsubcategory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'scrapreason.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'transactionhistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'transactionhistoryarchive.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'unitmeasure.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'workorder.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'workorderrouting.modifieddate' exists in DB but NOT in arc42
+
+SCHEMA: purchasing
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'productvendor.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'purchaseorderdetail.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'purchaseorderheader.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'shipmethod.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'shipmethod.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'vendor.modifieddate' exists in DB but NOT in arc42
+
+SCHEMA: sales
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'countryregioncurrency.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'creditcard.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'currency.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'currencyrate.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'customer.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'customer.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'personcreditcard.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesorderdetail.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesorderdetail.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesorderheader.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesorderheader.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesorderheadersalesreason.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesperson.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesperson.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salespersonquotahistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salespersonquotahistory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesreason.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salestaxrate.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salestaxrate.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesterritory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesterritory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesterritoryhistory.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'salesterritoryhistory.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'shoppingcartitem.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'specialoffer.discount_percentage' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'specialoffer.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'specialoffer.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'specialofferproduct.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'specialofferproduct.rowguid' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'store.modifieddate' exists in DB but NOT in arc42
+  ⚠️  COLUMN DRIFT: 'store.rowguid' exists in DB but NOT in arc42
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       1
+  Drift detected:      98
+
+  ⚠️  98 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================

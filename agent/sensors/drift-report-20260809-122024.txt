@@ -1,0 +1,41 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-09 12:20:24
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: loyalty
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: person
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: production
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: purchasing
+----------------------------------------
+  ❌ COLUMN MISSING: 'purchaserequest.notes' in arc42 but NOT in database
+
+SCHEMA: sales
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       5
+  Drift detected:      1
+
+  ⚠️  1 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================

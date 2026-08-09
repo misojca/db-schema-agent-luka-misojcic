@@ -22,6 +22,235 @@ namespace AdventureWorks.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AdventureWorks.Domain.HumanResources.Entities.Employee", b =>
+                {
+                    b.Property<int>("BusinessEntityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("businessentityid");
+
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date")
+                        .HasColumnName("birthdate");
+
+                    b.Property<bool>("CurrentFlag")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("currentflag");
+
+                    b.Property<short?>("CurrentPayFrequency")
+                        .HasColumnType("smallint")
+                        .HasColumnName("currentpayfrequency");
+
+                    b.Property<decimal?>("CurrentPayRate")
+                        .HasColumnType("numeric")
+                        .HasColumnName("currentpayrate");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("character")
+                        .HasColumnName("gender");
+
+                    b.Property<DateOnly>("HireDate")
+                        .HasColumnType("date")
+                        .HasColumnName("hiredate");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("jobtitle");
+
+                    b.Property<string>("LoginId")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("loginid");
+
+                    b.Property<string>("MaritalStatus")
+                        .IsRequired()
+                        .HasColumnType("character")
+                        .HasColumnName("maritalstatus");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("NationalIdNumber")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("nationalidnumber");
+
+                    b.Property<string>("OrganizationNode")
+                        .HasColumnType("character varying")
+                        .HasColumnName("organizationnode");
+
+                    b.Property<DateTime?>("PayChangeDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("paychangedate");
+
+                    b.Property<Guid>("Rowguid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("rowguid")
+                        .HasDefaultValueSql("uuid_generate_v1()");
+
+                    b.Property<bool>("SalariedFlag")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("salariedflag");
+
+                    b.Property<short>("SickLeaveHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)0)
+                        .HasColumnName("sickleavehours");
+
+                    b.Property<short>("VacationHours")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)0)
+                        .HasColumnName("vacationhours");
+
+                    b.HasKey("BusinessEntityId")
+                        .HasName("PK_HumanResources_Employee");
+
+                    b.ToTable("employee", "humanresources", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Loyalty.Entities.LoyaltyAccount", b =>
+                {
+                    b.Property<int>("LoyaltyAccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("loyaltyaccountid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LoyaltyAccountId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("customerid");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modified_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<int>("PointsBalance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("points_balance");
+
+                    b.HasKey("LoyaltyAccountId")
+                        .HasName("PK_Loyalty_LoyaltyAccount");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_loyaltyaccount_customerid");
+
+                    b.ToTable("loyaltyaccount", "loyalty", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Person.Entities.Address", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("addressid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("addressline1");
+
+                    b.Property<string>("AddressLine2")
+                        .HasColumnType("character varying")
+                        .HasColumnName("addressline2");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("city");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("postalcode");
+
+                    b.Property<Guid>("Rowguid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("rowguid")
+                        .HasDefaultValueSql("uuid_generate_v1()");
+
+                    b.Property<byte[]>("SpatialLocation")
+                        .HasColumnType("bytea")
+                        .HasColumnName("spatiallocation");
+
+                    b.Property<int>("StateProvinceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("stateprovinceid");
+
+                    b.HasKey("AddressId")
+                        .HasName("PK_Person_Address");
+
+                    b.HasIndex("StateProvinceId")
+                        .HasDatabaseName("IX_address_stateprovinceid");
+
+                    b.ToTable("address", "person", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Person.Entities.AddressDetail", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .HasColumnType("integer")
+                        .HasColumnName("addressid");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<byte[]>("SpatialLocation")
+                        .HasColumnType("bytea")
+                        .HasColumnName("spatiallocation");
+
+                    b.HasKey("AddressId")
+                        .HasName("PK_Person_AddressDetail");
+
+                    b.ToTable("addressdetail", "person", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
             modelBuilder.Entity("AdventureWorks.Domain.Production.Entities.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -207,6 +436,52 @@ namespace AdventureWorks.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AdventureWorks.Domain.Purchasing.Entities.PurchaseRequest", b =>
+                {
+                    b.Property<int>("PurchaseRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("purchaserequestid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PurchaseRequestId"));
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("employeeid");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnName("productid");
+
+                    b.Property<short>("Quantity")
+                        .HasColumnType("smallint")
+                        .HasColumnName("quantity");
+
+                    b.Property<DateTime>("RequestDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("requestdate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("pending")
+                        .HasColumnName("status");
+
+                    b.HasKey("PurchaseRequestId")
+                        .HasName("PK_Purchasing_PurchaseRequest");
+
+                    b.HasIndex("EmployeeId")
+                        .HasDatabaseName("IX_purchaserequest_employeeid");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_purchaserequest_productid");
+
+                    b.ToTable("purchaserequest", "purchasing");
+                });
+
             modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.CurrencyRate", b =>
                 {
                     b.Property<int>("CurrencyRateId")
@@ -282,6 +557,79 @@ namespace AdventureWorks.Infrastructure.Migrations
                     b.HasKey("CustomerId");
 
                     b.ToTable("customer", "sales", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.SpecialOffer", b =>
+                {
+                    b.Property<int>("SpecialOfferId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("specialofferid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SpecialOfferId"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("category");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("description");
+
+                    b.Property<decimal>("DiscountPct")
+                        .HasColumnType("numeric")
+                        .HasColumnName("discountpct");
+
+                    b.Property<decimal?>("DiscountPercentage")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric(5,2)")
+                        .HasDefaultValue(0.0m)
+                        .HasColumnName("discount_percentage");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("enddate");
+
+                    b.Property<int?>("MaxQty")
+                        .HasColumnType("integer")
+                        .HasColumnName("maxqty");
+
+                    b.Property<int>("MinQty")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("minqty");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("Rowguid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("rowguid")
+                        .HasDefaultValueSql("uuid_generate_v1()");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("startdate");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("type");
+
+                    b.HasKey("SpecialOfferId")
+                        .HasName("PK_Sales_SpecialOffer");
+
+                    b.ToTable("specialoffer", "sales", t =>
                         {
                             t.ExcludeFromMigrations();
                         });

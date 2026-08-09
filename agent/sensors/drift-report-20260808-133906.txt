@@ -1,0 +1,115 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-08 13:39:06
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ✅ OK — all documented tables present
+
+SCHEMA: loyalty
+----------------------------------------
+  ⚠️  DRIFT: Schema exists in database but NOT documented in arc42
+
+SCHEMA: person
+----------------------------------------
+  ⚠️  DRIFT: 'addresstype' exists in DB but NOT in arc42
+       Columns: addresstypeid, name, rowguid, modifieddate
+  ⚠️  DRIFT: 'businessentityaddress' exists in DB but NOT in arc42
+       Columns: businessentityid, addressid, addresstypeid, rowguid, modifieddate
+  ⚠️  DRIFT: 'businessentitycontact' exists in DB but NOT in arc42
+       Columns: businessentityid, personid, contacttypeid, rowguid, modifieddate
+  ⚠️  DRIFT: 'contacttype' exists in DB but NOT in arc42
+       Columns: contacttypeid, name, modifieddate
+  ⚠️  DRIFT: 'countryregion' exists in DB but NOT in arc42
+       Columns: countryregioncode, name, modifieddate
+  ⚠️  DRIFT: 'password' exists in DB but NOT in arc42
+       Columns: businessentityid, passwordhash, passwordsalt, rowguid, modifieddate
+  ⚠️  DRIFT: 'phonenumbertype' exists in DB but NOT in arc42
+       Columns: phonenumbertypeid, name, modifieddate
+
+SCHEMA: production
+----------------------------------------
+  ⚠️  DRIFT: 'culture' exists in DB but NOT in arc42
+       Columns: cultureid, name, modifieddate
+  ⚠️  DRIFT: 'document' exists in DB but NOT in arc42
+       Columns: title, owner, folderflag, filename, fileextension ... (+8 more)
+  ⚠️  DRIFT: 'illustration' exists in DB but NOT in arc42
+       Columns: illustrationid, diagram, modifieddate
+  ⚠️  DRIFT: 'location' exists in DB but NOT in arc42
+       Columns: locationid, name, costrate, availability, modifieddate
+  ⚠️  DRIFT: 'productcosthistory' exists in DB but NOT in arc42
+       Columns: productid, startdate, enddate, standardcost, modifieddate
+  ⚠️  DRIFT: 'productdescription' exists in DB but NOT in arc42
+       Columns: productdescriptionid, description, rowguid, modifieddate
+  ⚠️  DRIFT: 'productdocument' exists in DB but NOT in arc42
+       Columns: productid, modifieddate, documentnode
+  ⚠️  DRIFT: 'productlistpricehistory' exists in DB but NOT in arc42
+       Columns: productid, startdate, enddate, listprice, modifieddate
+  ⚠️  DRIFT: 'productmodel' exists in DB but NOT in arc42
+       Columns: productmodelid, name, catalogdescription, instructions, rowguid ... (+1 more)
+  ⚠️  DRIFT: 'productmodelillustration' exists in DB but NOT in arc42
+       Columns: productmodelid, illustrationid, modifieddate
+  ⚠️  DRIFT: 'productmodelproductdescriptionculture' exists in DB but NOT in arc42
+       Columns: productmodelid, productdescriptionid, cultureid, modifieddate
+  ⚠️  DRIFT: 'productphoto' exists in DB but NOT in arc42
+       Columns: productphotoid, thumbnailphoto, thumbnailphotofilename, largephoto, largephotofilename ... (+1 more)
+  ⚠️  DRIFT: 'productproductphoto' exists in DB but NOT in arc42
+       Columns: productid, productphotoid, primary, modifieddate
+  ⚠️  DRIFT: 'productreview' exists in DB but NOT in arc42
+       Columns: productreviewid, productid, reviewername, reviewdate, emailaddress ... (+3 more)
+  ⚠️  DRIFT: 'scrapreason' exists in DB but NOT in arc42
+       Columns: scrapreasonid, name, modifieddate
+  ⚠️  DRIFT: 'transactionhistoryarchive' exists in DB but NOT in arc42
+       Columns: transactionid, productid, referenceorderid, referenceorderlineid, transactiondate ... (+4 more)
+  ⚠️  DRIFT: 'unitmeasure' exists in DB but NOT in arc42
+       Columns: unitmeasurecode, name, modifieddate
+  ⚠️  DRIFT: 'workorder' exists in DB but NOT in arc42
+       Columns: workorderid, productid, orderqty, scrappedqty, startdate ... (+4 more)
+  ⚠️  DRIFT: 'workorderrouting' exists in DB but NOT in arc42
+       Columns: workorderid, productid, operationsequence, locationid, scheduledstartdate ... (+7 more)
+
+SCHEMA: purchasing
+----------------------------------------
+  ⚠️  DRIFT: 'productvendor' exists in DB but NOT in arc42
+       Columns: productid, businessentityid, averageleadtime, standardprice, lastreceiptcost ... (+6 more)
+  ⚠️  DRIFT: 'purchaseorderdetail' exists in DB but NOT in arc42
+       Columns: purchaseorderid, purchaseorderdetailid, duedate, orderqty, productid ... (+4 more)
+
+SCHEMA: sales
+----------------------------------------
+  ⚠️  DRIFT: 'countryregioncurrency' exists in DB but NOT in arc42
+       Columns: countryregioncode, currencycode, modifieddate
+  ⚠️  DRIFT: 'creditcard' exists in DB but NOT in arc42
+       Columns: creditcardid, cardtype, cardnumber, expmonth, expyear ... (+1 more)
+  ⚠️  DRIFT: 'personcreditcard' exists in DB but NOT in arc42
+       Columns: businessentityid, creditcardid, modifieddate
+  ⚠️  DRIFT: 'salesorderheadersalesreason' exists in DB but NOT in arc42
+       Columns: salesorderid, salesreasonid, modifieddate
+  ⚠️  DRIFT: 'salesperson' exists in DB but NOT in arc42
+       Columns: businessentityid, territoryid, salesquota, bonus, commissionpct ... (+4 more)
+  ⚠️  DRIFT: 'salespersonquotahistory' exists in DB but NOT in arc42
+       Columns: businessentityid, quotadate, salesquota, rowguid, modifieddate
+  ⚠️  DRIFT: 'salesreason' exists in DB but NOT in arc42
+       Columns: salesreasonid, name, reasontype, modifieddate
+  ⚠️  DRIFT: 'salestaxrate' exists in DB but NOT in arc42
+       Columns: salestaxrateid, stateprovinceid, taxtype, taxrate, name ... (+2 more)
+  ⚠️  DRIFT: 'salesterritoryhistory' exists in DB but NOT in arc42
+       Columns: businessentityid, territoryid, startdate, enddate, rowguid ... (+1 more)
+  ⚠️  DRIFT: 'shoppingcartitem' exists in DB but NOT in arc42
+       Columns: shoppingcartitemid, shoppingcartid, quantity, productid, datecreated ... (+1 more)
+  ⚠️  DRIFT: 'specialofferproduct' exists in DB but NOT in arc42
+       Columns: specialofferid, productid, rowguid, modifieddate
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       1
+  Drift detected:      40
+
+  ⚠️  40 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================

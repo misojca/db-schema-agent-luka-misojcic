@@ -8,8 +8,9 @@ public class LoyaltyAccountConfiguration : IEntityTypeConfiguration<LoyaltyAccou
 {
     public void Configure(EntityTypeBuilder<LoyaltyAccount> builder)
     {
-        // New table — EF manages full DDL. No ExcludeFromMigrations.
-        builder.ToTable("loyaltyaccount", "loyalty");
+        // Table already exists in the database (created by an earlier migration).
+        // ExcludeFromMigrations prevents EF from re-emitting CREATE TABLE.
+        builder.ToTable("loyaltyaccount", "loyalty", t => t.ExcludeFromMigrations());
 
         builder.HasKey(l => l.LoyaltyAccountId)
             .HasName("PK_Loyalty_LoyaltyAccount");
