@@ -16,10 +16,12 @@ public class AdventureWorksDbContext : DbContext
 
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<PurchaseOrderDetail> PurchaseOrderDetails => Set<PurchaseOrderDetail>();
+    public DbSet<PurchaseRequest> PurchaseRequests => Set<PurchaseRequest>();
     public DbSet<LoyaltyAccount> LoyaltyAccounts => Set<LoyaltyAccount>();
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<AddressDetail> AddressDetails => Set<AddressDetail>();
     public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<SpecialOffer> SpecialOffers => Set<SpecialOffer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

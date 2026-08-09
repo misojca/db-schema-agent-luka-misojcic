@@ -1,0 +1,25 @@
+erDiagram
+    %% Action 3 — DropNotesFromPurchaseRequest
+    %% Migration: 20260809101049_DropNotesFromPurchaseRequest
+    %% The `notes` column (text, nullable) was removed from purchasing.purchaserequest.
+    %% Table was empty; no data loss occurred.
+
+    PURCHASING__PURCHASEREQUEST {
+        int    purchaserequestid  PK
+        int    employeeid         FK
+        int    productid          FK
+        smallint quantity
+        timestamp requestdate
+        varchar  status
+    }
+
+    HUMANRESOURCES__EMPLOYEE {
+        int businessentityid PK
+    }
+
+    PRODUCTION__PRODUCT {
+        int productid PK
+    }
+
+    HUMANRESOURCES__EMPLOYEE ||--o{ PURCHASING__PURCHASEREQUEST : "submits"
+    PRODUCTION__PRODUCT      ||--o{ PURCHASING__PURCHASEREQUEST : "requested in"

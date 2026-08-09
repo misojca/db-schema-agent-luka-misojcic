@@ -42,9 +42,8 @@ SCHEMAS_TO_CHECK = [
 
 def parse_arc42(filepath):
     """
-    Parse arc42 Chapter 5 (Building Block View) and extract
-    documented tables per schema.
-    Returns: dict { schema: [table1, table2, ...] }
+    Parse arc42 Chapter 5 and extract documented tables and their columns.
+    Returns: dict { schema: { table: [col1, col2, ...] } }
     """
     documented = {}
 
@@ -56,37 +55,57 @@ def parse_arc42(filepath):
         print("       Run from repo root directory.")
         sys.exit(1)
 
-    # Find schema sections (## 5.x <Schema> Schema)
-    section_pattern = re.compile(
-        r"## 5\.\d+ (\w+) Schema[^\n]*\n(.*?)(?=## |\Z)",
-        re.DOTALL | re.IGNORECASE
-    )
+    current_schema = None
+    current_table = None
+    header_skipped = False
 
-    # Find table names in markdown tables (| tablename | ... |)
-    table_pattern = re.compile(r"^\|\s*(\w+)\s*\|", re.MULTILINE)
+    for line in content.splitlines():
+        line = line.strip()
 
-    for match in section_pattern.finditer(content):
-        schema_name = match.group(1).lower()
-        section_content = match.group(2)
+        # Schema header: ## 5.x SomeName Schema
+        schema_match = re.match(
+            r"^## 5\.\d+\s+(\w+)\s+Schema", line, re.IGNORECASE
+        )
+        if schema_match:
+            current_schema = schema_match.group(1).lower()
+            if current_schema not in documented:
+                documented[current_schema] = {}
+            current_table = None
+            header_skipped = False
+            continue
 
-        tables = []
-        for table_match in table_pattern.finditer(section_content):
-            table_name = table_match.group(1).lower()
-            # Skip header rows
-            if table_name not in ("table", "name", "schema", "context", "key"):
-                tables.append(table_name)
+        # Table header: ### tablename
+        if line.startswith("### ") and current_schema:
+            current_table = line[4:].strip().lower()
+            documented[current_schema][current_table] = []
+            header_skipped = False
+            continue
 
-        if tables:
-            documented[schema_name] = tables
+        # Skip markdown table header and separator rows
+        if current_table and (
+            "column name" in line.lower() or
+            line.startswith("|---") or
+            line.startswith("| ---")
+        ):
+            header_skipped = True
+            continue
+
+        # Parse column rows: | column_name | data_type | nullable |
+        if current_table and line.startswith("|") and header_skipped:
+            parts = [p.strip() for p in line.split("|")]
+            parts = [p for p in parts if p]
+            if parts:
+                col_name = parts[0].lower().strip()
+                if col_name and col_name.isidentifier():
+                    documented[current_schema][current_table].append(col_name)
 
     return documented
-
 
 # ─── Query actual database state ──────────────────────────────────────────────
 
 def get_db_state():
     """
-    Query information_schema for actual tables and columns in the database.
+    Query information_schema for actual tables and columns.
     Returns: dict { schema: { table: [col1, col2, ...] } }
     """
     db_state = {}
@@ -95,7 +114,7 @@ def get_db_state():
         conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
 
-        # Get all tables per schema
+        # Get all tables
         cursor.execute("""
             SELECT table_schema, table_name
             FROM information_schema.tables
@@ -109,21 +128,17 @@ def get_db_state():
                 db_state[schema] = {}
             db_state[schema][table] = []
 
-        # Get all columns per table
+        # Get all columns
         cursor.execute("""
-            SELECT table_schema, table_name, column_name, data_type, is_nullable
+            SELECT table_schema, table_name, column_name
             FROM information_schema.columns
             WHERE table_schema = ANY(%s)
             ORDER BY table_schema, table_name, ordinal_position;
         """, (SCHEMAS_TO_CHECK,))
 
-        for schema, table, column, dtype, nullable in cursor.fetchall():
+        for schema, table, column in cursor.fetchall():
             if schema in db_state and table in db_state[schema]:
-                db_state[schema][table].append({
-                    "name": column,
-                    "type": dtype,
-                    "nullable": nullable
-                })
+                db_state[schema][table].append(column)
 
         cursor.close()
         conn.close()
@@ -141,6 +156,7 @@ def get_db_state():
 def generate_report(documented, db_state):
     """
     Compare documented state (arc42) with actual DB state.
+    Checks both table-level and column-level drift.
     Returns drift report as string.
     """
     lines = []
@@ -154,14 +170,13 @@ def generate_report(documented, db_state):
     total_drift = 0
     total_ok = 0
 
-    # Check all schemas in database
     all_schemas = set(list(documented.keys()) + list(db_state.keys()))
 
     for schema in sorted(all_schemas):
         lines.append(f"SCHEMA: {schema}")
         lines.append("-" * 40)
 
-        doc_tables = set(documented.get(schema, []))
+        doc_tables = set(documented.get(schema, {}).keys())
         db_tables = set(db_state.get(schema, {}).keys())
 
         # Schema in DB but not documented
@@ -175,28 +190,57 @@ def generate_report(documented, db_state):
             total_drift += 1
 
         else:
-            # Tables in DB but not documented
             undocumented_tables = db_tables - doc_tables
             missing_tables = doc_tables - db_tables
+            schema_drift = False
 
-            if not undocumented_tables and not missing_tables:
-                lines.append(f"  ✅ OK — all documented tables present")
+            # Tables in DB but not documented
+            if undocumented_tables:
+                for t in sorted(undocumented_tables):
+                    cols = db_state[schema].get(t, [])
+                    col_preview = ", ".join(cols[:5])
+                    if len(cols) > 5:
+                        col_preview += f" ... (+{len(cols)-5} more)"
+                    lines.append(f"  ⚠️  TABLE DRIFT: '{t}' exists in DB but NOT in arc42")
+                    lines.append(f"       Columns: {col_preview}")
+                    total_drift += 1
+                    schema_drift = True
+
+            # Tables documented but not in DB
+            if missing_tables:
+                for t in sorted(missing_tables):
+                    lines.append(f"  ❌ MISSING: '{t}' documented in arc42 but NOT in database")
+                    total_drift += 1
+                    schema_drift = True
+
+            # Column-level drift for matching tables
+            matching_tables = doc_tables & db_tables
+            for table in sorted(matching_tables):
+                doc_cols = set(documented.get(schema, {}).get(table, []))
+                db_cols = set(db_state[schema].get(table, []))
+
+                # Only check if arc42 has column info for this table
+                if not doc_cols:
+                    continue
+
+                new_cols = db_cols - doc_cols
+                missing_cols = doc_cols - db_cols
+
+                if new_cols:
+                    for col in sorted(new_cols):
+                        lines.append(f"  ⚠️  COLUMN DRIFT: '{table}.{col}' exists in DB but NOT in arc42")
+                        total_drift += 1
+                        schema_drift = True
+
+                if missing_cols:
+                    for col in sorted(missing_cols):
+                        lines.append(f"  ❌ COLUMN MISSING: '{table}.{col}' in arc42 but NOT in database")
+                        total_drift += 1
+                        schema_drift = True
+
+            if not schema_drift:
+                lines.append(f"  ✅ OK — all documented tables and columns present")
                 total_ok += 1
-            else:
-                if undocumented_tables:
-                    for t in sorted(undocumented_tables):
-                        cols = db_state[schema].get(t, [])
-                        col_names = ", ".join(c["name"] for c in cols[:5])
-                        if len(cols) > 5:
-                            col_names += f" ... (+{len(cols)-5} more)"
-                        lines.append(f"  ⚠️  DRIFT: '{t}' exists in DB but NOT in arc42")
-                        lines.append(f"       Columns: {col_names}")
-                        total_drift += 1
-
-                if missing_tables:
-                    for t in sorted(missing_tables):
-                        lines.append(f"  ❌ MISSING: '{t}' documented in arc42 but NOT in database")
-                        total_drift += 1
 
         lines.append("")
 
@@ -242,7 +286,6 @@ def main():
         f.write(report)
     print(f"\nReport saved to: {report_path}")
 
-    # Exit with error code if drift detected
     if "drift(s) detected" in report:
         sys.exit(1)
     sys.exit(0)
