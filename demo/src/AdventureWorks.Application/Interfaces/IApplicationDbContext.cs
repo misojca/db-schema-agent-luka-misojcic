@@ -1,3 +1,4 @@
+using AdventureWorks.Domain.HumanResources.Entities;
 using AdventureWorks.Domain.Production.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,4 +11,5 @@ namespace AdventureWorks.Application.Interfaces;
 public interface IApplicationDbContext
 {
     DbSet<Product> Products { get; }
+    DbSet<Employee> Employees { get; }
 }
