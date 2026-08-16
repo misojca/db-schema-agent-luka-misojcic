@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, 'feature/**', 'fix/**', 'hotfix/**', 'chore/**']
+    branches: [main, master, 'feature/**', 'feat/**', 'fix/**', 'hotfix/**', 'chore/**']
     paths:
       - 'demo/src/**'
       - 'demo/tests/**'
