@@ -1,4 +1,5 @@
 using AdventureWorks.Domain.HumanResources.Entities;
+using AdventureWorks.Domain.Loyalty.Entities;
 using AdventureWorks.Domain.Production.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,4 +13,5 @@ public interface IApplicationDbContext
 {
     DbSet<Product> Products { get; }
     DbSet<Employee> Employees { get; }
+    DbSet<LoyaltyAccount> LoyaltyAccounts { get; }
 }
