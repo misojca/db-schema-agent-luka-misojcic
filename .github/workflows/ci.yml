@@ -113,7 +113,7 @@ jobs:
         env:
           ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
 	
-	- name: Seed test data for integration tests
+      - name: Seed test data for integration tests
         run: |
           psql -d Adventureworks -c "
             INSERT INTO loyalty.loyaltyaccount (customerid, points_balance, tier)
