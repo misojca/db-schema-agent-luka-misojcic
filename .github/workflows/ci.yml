@@ -117,7 +117,7 @@ jobs:
         run: |
           psql -d Adventureworks -c "
             INSERT INTO loyalty.loyaltyaccount (customerid, points_balance)
-            VALUES (42, 150, 'bronze')
+            VALUES (42, 150)
             ON CONFLICT DO NOTHING;
           "
         env:
