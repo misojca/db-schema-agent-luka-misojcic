@@ -112,6 +112,19 @@ jobs:
             --startup-project demo/src/AdventureWorks.Api
         env:
           ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
+	
+	- name: Seed test data for integration tests
+        run: |
+          psql -d Adventureworks -c "
+            INSERT INTO loyalty.loyaltyaccount (customerid, points_balance, tier)
+            VALUES (42, 150, 'bronze')
+            ON CONFLICT DO NOTHING;
+          "
+        env:
+          PGHOST: localhost
+          PGPORT: 5433
+          PGUSER: postgres
+          PGPASSWORD: postgres
 
       - name: Run integration tests
         # WebApplicationFactory<Program> picks up ConnectionStrings:DefaultConnection
