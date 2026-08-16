@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'feature/**', 'fix/**', 'hotfix/**', 'chore/**']
+    paths:
+      - 'demo/src/**'
+      - 'demo/tests/**'
+      - '**/*.csproj'
+      - '**/*.sln'
+      - 'Dockerfile'
+      - 'docs/adventureworks-architecture/**'
+      - 'agent/sensors/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'demo/src/**'
+      - 'demo/tests/**'
+      - '**/*.csproj'
+      - '**/*.sln'
+      - 'Dockerfile'
+      - 'docs/adventureworks-architecture/**'
+      - 'agent/sensors/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 1: restore → build → migrate → round-trip → test → drift sensor
+  # ────────────────────────────────────────────────────────────────────────────
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        # Plain postgres:15 — the AdventureWorks schema and seed data are
+        # loaded in the "Load AdventureWorks seed data" step below from
+        # scripts/adventureworks-seed.sql.gz (pg_dump of the local
+        # AdventureWorks-for-Postgres container, committed to this repo).
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: Adventureworks
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Matches ConnectionStrings:DefaultConnection in appsettings.json and
+      # the hardcoded string in DatabaseConnectionTests.cs.
+      # Port 5433 mirrors the local docker-compose setup in AdventureWorks-for-Postgres.
+      CONNECTION_STRING: >-
+        Host=localhost;Port=5433;Database=Adventureworks;Username=postgres;Password=postgres
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Load AdventureWorks seed data
+        # Restores the full AdventureWorks schema and seed data from a pg_dump
+        # committed to this repo at scripts/adventureworks-seed.sql.gz.
+        # The dump was generated from the AdventureWorks-for-Postgres container
+        # with --no-owner --no-acl so it applies cleanly to any postgres user.
+        # This must run BEFORE EF migrations so that ExcludeFromMigrations()
+        # tables (Customer, PurchaseOrderHeader, etc.) already exist when
+        # migrations are applied.
+        run: gunzip -c scripts/adventureworks-seed.sql.gz | psql -d Adventureworks
+        env:
+          PGHOST: localhost
+          PGPORT: 5433
+          PGUSER: postgres
+          PGPASSWORD: postgres
+
+      - name: Restore
+        run: dotnet restore AdventureWorks.sln
+
+      - name: Build
+        run: dotnet build AdventureWorks.sln --no-restore --configuration Release
+
+      - name: Apply EF Core migrations
+        run: |
+          dotnet ef database update \
+            --project demo/src/AdventureWorks.Infrastructure \
+            --startup-project demo/src/AdventureWorks.Api
+        env:
+          ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
+
+      - name: Round-trip migration test
+        # Rolls all migrations back to the empty state, then re-applies them.
+        # Proves every migration is reversible and the full up-path is idempotent.
+        run: |
+          dotnet ef database update 0 \
+            --project demo/src/AdventureWorks.Infrastructure \
+            --startup-project demo/src/AdventureWorks.Api
+          dotnet ef database update \
+            --project demo/src/AdventureWorks.Infrastructure \
+            --startup-project demo/src/AdventureWorks.Api
+        env:
+          ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
+
+      - name: Run integration tests
+        # WebApplicationFactory<Program> picks up ConnectionStrings:DefaultConnection
+        # from appsettings.json; the env var override (double-underscore notation)
+        # ensures the service container address is used instead of localhost:5433
+        # from the checked-in appsettings.json (which happen to match, but the
+        # override makes CI independent of that file's content).
+        run: |
+          dotnet test demo/tests/AdventureWorks.Integration.Tests \
+            --no-build \
+            --configuration Release \
+            --verbosity normal
+        env:
+          ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
+
+      - name: Setup Python (for drift sensor)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install drift sensor dependencies
+        run: pip install --no-cache-dir psycopg2-binary==2.9.10
+
+      - name: Run schema drift sensor
+        # drift-detector.py already calls sys.exit(1) when drift is detected
+        # (see the '"drift(s) detected" in report' branch in main()).
+        # It reads docs/adventureworks-architecture/05-building-block-view.md
+        # and connects to postgres on localhost:5433 using the same credentials
+        # as the service container above.
+        run: python3 agent/sensors/drift-detector.py
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 2: verify the API packages correctly as a Docker image
+  # Runs after build-and-test but is NOT a precondition for it.
+  # ────────────────────────────────────────────────────────────────────────────
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t adventureworks-api -f Dockerfile .
