@@ -116,7 +116,7 @@ jobs:
       - name: Seed test data for integration tests
         run: |
           psql -d Adventureworks -c "
-            INSERT INTO loyalty.loyaltyaccount (customerid, points_balance, tier)
+            INSERT INTO loyalty.loyaltyaccount (customerid, points_balance)
             VALUES (42, 150, 'bronze')
             ON CONFLICT DO NOTHING;
           "
