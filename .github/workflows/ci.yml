@@ -112,7 +112,7 @@ jobs:
             --startup-project demo/src/AdventureWorks.Api
         env:
           ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
-	
+
       - name: Seed test data for integration tests
         run: |
           psql -d Adventureworks -c "
