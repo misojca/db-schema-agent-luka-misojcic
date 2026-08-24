@@ -1,0 +1,35 @@
+erDiagram
+    PURCHASING__PURCHASERETURN {
+        int purchasereturnid PK
+        int purchaseorderdetailid FK
+        timestamp returndate
+        smallint quantity
+        varchar200 reason
+        timestamp modifieddate
+    }
+
+    PURCHASING__PURCHASEORDERDETAIL {
+        int purchaseorderid PK
+        int purchaseorderdetailid PK
+        int productid FK
+        smallint orderqty
+        numeric unitprice
+        numeric receivedqty
+        numeric rejectedqty
+        timestamp duedate
+        timestamp modifieddate
+    }
+
+    PURCHASING__PURCHASEORDERHEADER {
+        int purchaseorderid PK
+        int vendorid FK
+        int employeeid FK
+        int shipmethodid FK
+        timestamp orderdate
+        numeric subtotal
+        numeric taxamt
+        numeric freight
+    }
+
+    PURCHASING__PURCHASEORDERHEADER ||--o{ PURCHASING__PURCHASEORDERDETAIL : "contains"
+    PURCHASING__PURCHASEORDERDETAIL ||--o{ PURCHASING__PURCHASERETURN : "returned via"

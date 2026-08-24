@@ -482,6 +482,48 @@ namespace AdventureWorks.Infrastructure.Migrations
                     b.ToTable("purchaserequest", "purchasing");
                 });
 
+            modelBuilder.Entity("AdventureWorks.Domain.Purchasing.Entities.PurchaseReturn", b =>
+                {
+                    b.Property<int>("PurchaseReturnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("purchasereturnid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PurchaseReturnId"));
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<int>("PurchaseOrderDetailId")
+                        .HasColumnType("integer")
+                        .HasColumnName("purchaseorderdetailid");
+
+                    b.Property<short>("Quantity")
+                        .HasColumnType("smallint")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("returndate")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("PurchaseReturnId")
+                        .HasName("PK_Purchasing_PurchaseReturn");
+
+                    b.HasIndex("PurchaseOrderDetailId")
+                        .HasDatabaseName("IX_purchasereturn_purchaseorderdetailid");
+
+                    b.ToTable("purchasereturn", "purchasing");
+                });
+
             modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.CurrencyRate", b =>
                 {
                     b.Property<int>("CurrencyRateId")
