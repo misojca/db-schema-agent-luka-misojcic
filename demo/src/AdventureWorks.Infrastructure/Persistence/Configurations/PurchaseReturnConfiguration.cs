@@ -21,8 +21,7 @@ public class PurchaseReturnConfiguration : IEntityTypeConfiguration<PurchaseRetu
 {
     public void Configure(EntityTypeBuilder<PurchaseReturn> builder)
     {
-        builder.ToTable("purchasereturn", "purchasing");
-
+        builder.ToTable("purchasereturn", "purchasing", t => t.ExcludeFromMigrations());
         // Primary key — serial (identity)
         builder.HasKey(r => r.PurchaseReturnId)
             .HasName("PK_Purchasing_PurchaseReturn");
