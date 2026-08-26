@@ -1,0 +1,43 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-08-26 20:00:54
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ❌ COLUMN MISSING: 'employee.currentpayfrequency' in arc42 but NOT in database
+  ❌ COLUMN MISSING: 'employee.currentpayrate' in arc42 but NOT in database
+  ❌ COLUMN MISSING: 'employee.paychangedate' in arc42 but NOT in database
+
+SCHEMA: loyalty
+----------------------------------------
+  ⚠️  COLUMN DRIFT: 'loyaltyaccount.tier_expiry_date' exists in DB but NOT in arc42
+
+SCHEMA: person
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: production
+----------------------------------------
+  ❌ COLUMN MISSING: 'product.weight_kg' in arc42 but NOT in database
+
+SCHEMA: purchasing
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: sales
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       3
+  Drift detected:      5
+
+  ⚠️  5 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================
