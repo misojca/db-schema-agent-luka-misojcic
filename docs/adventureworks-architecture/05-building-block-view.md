@@ -466,7 +466,7 @@
 | modifieddate | timestamp without time zone | NO |
 
 
-## 5.4 Purchasing Schema (6 tables)
+## 5.4 Purchasing Schema (7 tables)
 
 ### productvendor
 | Column Name | Data Type | Nullable |
@@ -521,6 +521,16 @@
 | quantity | smallint | NO |
 | requestdate | timestamp without time zone | NO |
 | status | character varying | NO |
+
+### purchasereturn
+| Column Name | Data Type | Nullable |
+|-------------|-----------|----------|
+| purchasereturnid | integer | NO |
+| purchaseorderdetailid | integer | NO |
+| returndate | timestamp without time zone | NO |
+| quantity | smallint | NO |
+| reason | character varying | YES |
+| modifieddate | timestamp without time zone | NO |
 
 ### shipmethod
 | Column Name | Data Type | Nullable |
