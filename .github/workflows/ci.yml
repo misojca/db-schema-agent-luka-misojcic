@@ -112,13 +112,40 @@ jobs:
             --startup-project demo/src/AdventureWorks.Api
         env:
           ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
-
+          
+      - name: Register missing migrations in history
+        run: |
+          psql -d Adventureworks -c "
+            INSERT INTO public.__ef_migrations_history (\"MigrationId\", \"ProductVersion\")
+            VALUES ('20260826174905_AddTierExpiryDateToLoyaltyAccount', '8.0.11')
+            ON CONFLICT DO NOTHING;
+          "
+        env:
+          PGHOST: localhost
+          PGPORT: 5433
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          
       - name: Seed test data for integration tests
         run: |
           psql -d Adventureworks -c "
             INSERT INTO loyalty.loyaltyaccount (customerid, points_balance)
             VALUES (42, 150)
             ON CONFLICT DO NOTHING;
+          "
+          psql -d Adventureworks -c "
+            UPDATE humanresources.employee e
+            SET
+              currentpayrate = ph.rate,
+              currentpayfrequency = ph.payfrequency,
+              paychangedate = ph.ratechangedate
+            FROM (
+              SELECT DISTINCT ON (businessentityid)
+                businessentityid, rate, payfrequency, ratechangedate
+              FROM humanresources.employeepayhistory
+              ORDER BY businessentityid, ratechangedate DESC
+            ) ph
+            WHERE e.businessentityid = ph.businessentityid;
           "
         env:
           PGHOST: localhost

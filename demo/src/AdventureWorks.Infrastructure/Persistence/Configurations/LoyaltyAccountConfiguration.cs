@@ -8,9 +8,10 @@ public class LoyaltyAccountConfiguration : IEntityTypeConfiguration<LoyaltyAccou
 {
     public void Configure(EntityTypeBuilder<LoyaltyAccount> builder)
     {
-        // Table already exists in the database (created by an earlier migration).
-        // ExcludeFromMigrations prevents EF from re-emitting CREATE TABLE.
-        builder.ToTable("loyaltyaccount", "loyalty", t => t.ExcludeFromMigrations());
+        // Table was originally created by migration 20260731125008_AddLoyaltyAccount.
+        // ExcludeFromMigrations() has been removed so EF can emit ADD COLUMN for
+        // new columns (e.g. tier_expiry_date added in issue #25).
+        builder.ToTable("loyaltyaccount", "loyalty");
 
         builder.HasKey(l => l.LoyaltyAccountId)
             .HasName("PK_Loyalty_LoyaltyAccount");
@@ -41,6 +42,14 @@ public class LoyaltyAccountConfiguration : IEntityTypeConfiguration<LoyaltyAccou
             .HasColumnType("timestamp without time zone")
             .IsRequired()
             .HasDefaultValueSql("now()");
+
+        // Nullable column tracking when the current loyalty tier expires.
+        // NULL = no active tier or tier does not expire.
+        // Added in issue #25 (Scenario 8).
+        builder.Property(l => l.TierExpiryDate)
+            .HasColumnName("tier_expiry_date")
+            .HasColumnType("timestamp without time zone")
+            .IsRequired(false);
 
         // Index on FK column (cross-schema FK to sales.customer)
         builder.HasIndex(l => l.CustomerId)

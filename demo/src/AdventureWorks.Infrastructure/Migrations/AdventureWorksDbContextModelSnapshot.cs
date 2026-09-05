@@ -153,6 +153,10 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("points_balance");
 
+                    b.Property<DateTime?>("TierExpiryDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("tier_expiry_date");
+
                     b.HasKey("LoyaltyAccountId")
                         .HasName("PK_Loyalty_LoyaltyAccount");
 
@@ -160,10 +164,7 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_loyaltyaccount_customerid");
 
-                    b.ToTable("loyaltyaccount", "loyalty", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
+                    b.ToTable("loyaltyaccount", "loyalty");
                 });
 
             modelBuilder.Entity("AdventureWorks.Domain.Person.Entities.Address", b =>

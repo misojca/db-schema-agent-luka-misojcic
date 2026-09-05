@@ -22,4 +22,11 @@ public class LoyaltyAccount
 
     /// <summary>Date the loyalty account record was last updated.</summary>
     public DateTime ModifiedAt { get; set; }
+
+    /// <summary>
+    /// Optional expiry date of the customer's current loyalty tier.
+    /// NULL means no tier is active or the tier does not expire.
+    /// Added in issue #25 (Scenario 8).
+    /// </summary>
+    public DateTime? TierExpiryDate { get; set; }
 }

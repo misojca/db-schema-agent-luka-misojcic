@@ -1,0 +1,18 @@
+erDiagram
+    LOYALTY__LOYALTYACCOUNT {
+        int loyaltyaccountid PK
+        int customerid FK
+        int points_balance
+        timestamp created_at
+        timestamp modified_at
+        timestamp tier_expiry_date "nullable — added issue #25"
+    }
+
+    SALES__CUSTOMER {
+        int customerid PK
+        int personid FK
+        int storeid FK
+        int territoryid FK
+    }
+
+    SALES__CUSTOMER ||--o| LOYALTY__LOYALTYACCOUNT : "has loyalty account"

@@ -779,3 +779,4 @@
 | points_balance | integer | NO |
 | created_at | timestamp without time zone | NO |
 | modified_at | timestamp without time zone | NO |
+| tier_expiry_date | timestamp without time zone | YES |
