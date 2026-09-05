@@ -133,6 +133,20 @@ jobs:
             VALUES (42, 150)
             ON CONFLICT DO NOTHING;
           "
+          psql -d Adventureworks -c "
+            UPDATE humanresources.employee e
+            SET
+              currentpayrate = ph.rate,
+              currentpayfrequency = ph.payfrequency,
+              paychangedate = ph.ratechangedate
+            FROM (
+              SELECT DISTINCT ON (businessentityid)
+                businessentityid, rate, payfrequency, ratechangedate
+              FROM humanresources.employeepayhistory
+              ORDER BY businessentityid, ratechangedate DESC
+            ) ph
+            WHERE e.businessentityid = ph.businessentityid;
+          "
         env:
           PGHOST: localhost
           PGPORT: 5433
