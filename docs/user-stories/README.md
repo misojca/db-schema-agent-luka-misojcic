@@ -34,10 +34,10 @@ A story is **SUPPORTING** if it:
 
 | ID | Title | Domain File |
 |----|-------|-------------|
-| *(pending)* | Sales order management | sales.md |
+| PUR-STORY-001 | Create and Track Purchase Orders | purchasing.md |
+| SALES-STORY-001 | Place and Track Sales Orders | sales.md |
 | *(pending)* | Customer management | sales.md |
 | *(pending)* | Product catalog | production.md |
-| *(pending)* | Purchase order management | purchasing.md |
 | *(pending)* | Employee management | humanresources.md |
 
 ### SUPPORTING Stories — 80% (enhancements, not MVP blockers)
@@ -52,18 +52,19 @@ A story is **SUPPORTING** if it:
 
 | Story ID | Title | Priority | Status |
 |----------|-------|----------|--------|
+| SALES-STORY-001 | Place and Track Sales Orders | [CORE] | ⬜ Pending Approval |
+| PUR-STORY-001 | Create and Track Purchase Orders | [CORE] | ⬜ Pending Approval |
 | LOY-STORY-001 | Manage Customer Loyalty Account | [CORE]* | ⬜ Pending Approval |
 
-> \* Marked CORE per explicit request. By schema size and peripheral nature,
-> Loyalty would normally be SUPPORTING. It is promoted to CORE here as the
-> first story in this inventory and as the anchor for cross-schema FK
-> integrity validation (Quality Goal #1).
+> \* LOY-STORY-001 marked CORE per explicit request. By schema size and peripheral
+> nature, Loyalty would normally be SUPPORTING. It is promoted to CORE here as
+> the anchor for cross-schema FK integrity validation (Quality Goal #1).
 
 ---
 
 ## Pareto Progress
 
-📊 Pareto Progress: 0/0 core stories complete (— % of 20% core stories)
+📊 Pareto Progress: 0/5 core stories complete (0% of 20% core stories)
 🎯 Core functionality coverage: ~0% of 80% target
 
 > Progress will be updated as stories are approved.
