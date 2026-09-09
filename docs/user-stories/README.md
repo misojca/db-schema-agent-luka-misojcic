@@ -41,10 +41,9 @@ A story is **SUPPORTING** if it:
 | *(pending)* | Employee management | humanresources.md |
 
 ### SUPPORTING Stories — 80% (enhancements, not MVP blockers)
-
 | ID | Title | Domain File |
 |----|-------|-------------|
-| LOY-STORY-001 | Manage Customer Loyalty Account | loyalty.md |
+| *(pending)* | Loyalty tier management | loyalty.md |
 
 ---
 
