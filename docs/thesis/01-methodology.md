@@ -121,7 +121,7 @@ Definisano je i sprovedeno 6 evaluacionih scenarija rastuće složenosti. Svaki 
 | 5 | Splitting tabele (normalizacija) | Napredna | 1 | 2 (expand+contract) | ✅ |
 | 6 | Merge tabela (istorijski podaci sačuvani) | Napredna | 1 | 2 (expand+contract) | ✅ |
 
-Ukupno: 9 migracija generisano, correctness rate **83%** iz prve iteracije agenta (Scenario 1 zahtevao je 2 iteracije zbog otkrivenog baseline problema). Svi round-trip testovi su na kraju prošli uspešno.
+Ukupno: 10 migracija generisano za prvih 8 scenarija. Correctness rate iz prve iteracije za prvih 6 scenarija iznosi **83%** (5/6). Dodavanjem Scenarija 7 i 8, koji su oba prošla iz prve iteracije, ukupni correctness rate raste na **87.5%** (7/8). Scenario 1 zahtevao je 2 iteracije zbog otkrivenog baseline problema — round-trip sensor je uhvatio grešku pre commit-a, što je dovelo do iterativnog poboljšanja prompta agenta. Svi round-trip testovi su na kraju prošli uspešno.
 
 ### 4.1 Scenario 1 — Mapiranje postojeće tabele purchaseorderdetail
 
@@ -231,6 +231,11 @@ DB agent → verifikacija šeme + implementacija LoyaltyController + GREEN
 CI/CD pipeline → svih 9 testova prolazi, pipeline zelen
         ↓
 Git agent → commit i PR
+
+
+**Napomena — narušavanje granica odgovornosti:** DB agent je u ovom scenariju implementirao `LoyaltyController` i Application sloj (`GetLoyaltyAccountByCustomerIdQuery`, handler, DTO) — što je posao TDD agenta, ne DB agenta. Ovo se desilo jer DB agent ima pristup celom codebase-u i prepoznao je da je šema ispravna ali da nedostaje aplikacioni sloj. Ovo je ograničenje trenutne implementacije, ne karakteristika — preporučena mitigacija je strožija definicija opsega u promptu DB agenta.
+
+**Napomena — human-in-the-loop orkestracija:** TDD agent je eksplicitno naveo da ne može direktno da komunicira sa DB agentom ("I can't send messages to other agents"). Strukturisani izveštaj je ručno prenet od strane developera. Dakle "zatvorena petlja" nije autonomna — reč je o human-in-the-loop orkestraciji gde developer igra ulogu orkestratora između agenata.
 ```
 
 **Ključni nalaz**: granica odgovornosti između TDD i DB agenta u praksi nije uvek oštra — dijagnoza problema često zahteva uvid u više slojeva. Ovo je vredna tema za diskusiju u radu.
@@ -239,7 +244,7 @@ Git agent → commit i PR
 
 ## 7. Sumarni rezultati
 
-- **9 migracija** generisano kroz 6 scenarija, correctness rate **83%** iz prve iteracije
+- **10 migracija** generisano kroz 8 scenarija, correctness rate **87.5%** iz prve iteracije (7/8 scenarija — Scenario 1 zahtevao 2 iteracije)
 - Svi round-trip testovi (apply → rollback → re-apply) prošli uspešno
 - Zatvorena petlja schema drift senzora demonstrirana kroz 3 nezavisne akcije, 0 driftova nakon svake
 - **9 integration testova** prolazi za API sloj (GET /api/products, GET /api/employees, GET /api/loyalty/{customerId})
