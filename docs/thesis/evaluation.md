@@ -9,7 +9,7 @@ Svaki scenario je evaluiran po pet dimenzija:
 |---|---|
 | **Scenario** | Broj scenarija i tip promene |
 | **Složenost** | Osnovna / Srednja / Napredna |
-| **Tokeni (credits)** | Credits koje Kiro CLI prijavljuje na kraju agentske sesije |
+| **Tokeni (credits)** | Credits koje Kiro CLI prijavljuje na kraju agentske sesije. Kiro CLI koristi termin *credits* kao internu meru potrošnje — nije direktno ekvivalentan broju LLM tokena, ali služi kao uporediva metrika između scenarija. |
 | **Iteracije do GREEN** | Broj pokretanja DB agenta za isti zadatak |
 | **Vreme (min)** | Ukupno vreme od zadatka do prolaska round-trip testa |
 | **Ljudske intervencije** | Broj ručnih akcija van agenta |
@@ -61,6 +61,7 @@ Pored DB agenta, sledeći agenti su pokrenuti po scenariju:
 
 ## 4. Poređenje sa ručnom implementacijom (baseline)
 
+> **Napomena:** Vrednosti u ovoj sekciji su procene autora zasnovane na iskustvu sa sličnim zadacima, a ne rezultati kontrolisanog merenja. Nisu sprovedeni formalni eksperimenti u kojima bi isti zadatak bio implementiran i agentski i ručno uz merenje vremena.
 Kao referentna tačka, analizirana je ručna implementacija zadatka ekvivalentnog Scenariju 7 (dodavanje tabele `purchasing.purchasereturn`):
 
 | Korak | Procena ručnog vremena |
