@@ -522,7 +522,10 @@ namespace AdventureWorks.Infrastructure.Migrations
                     b.HasIndex("PurchaseOrderDetailId")
                         .HasDatabaseName("IX_purchasereturn_purchaseorderdetailid");
 
-                    b.ToTable("purchasereturn", "purchasing");
+                    b.ToTable("purchasereturn", "purchasing", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 
             modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.CurrencyRate", b =>
@@ -600,6 +603,75 @@ namespace AdventureWorks.Infrastructure.Migrations
                     b.HasKey("CustomerId");
 
                     b.ToTable("customer", "sales", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.SalesTerritory", b =>
+                {
+                    b.Property<int>("TerritoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("territoryid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TerritoryId"));
+
+                    b.Property<decimal>("CostLastYear")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("costlastyear");
+
+                    b.Property<decimal>("CostYtd")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("costytd");
+
+                    b.Property<string>("CountryRegionCode")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("countryregioncode");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("group");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("modifieddate")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("Rowguid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("rowguid")
+                        .HasDefaultValueSql("uuid_generate_v1()");
+
+                    b.Property<decimal>("SalesLastYear")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("saleslastyear");
+
+                    b.Property<decimal>("SalesYtd")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric(19,4)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("salesytd");
+
+                    b.HasKey("TerritoryId")
+                        .HasName("PK_Sales_SalesTerritory");
+
+                    b.ToTable("salesterritory", "sales", t =>
                         {
                             t.ExcludeFromMigrations();
                         });

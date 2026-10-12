@@ -26,6 +26,7 @@ public class AdventureWorksDbContext : DbContext, IApplicationDbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<SpecialOffer> SpecialOffers => Set<SpecialOffer>();
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<SalesTerritory> SalesTerritories => Set<SalesTerritory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
