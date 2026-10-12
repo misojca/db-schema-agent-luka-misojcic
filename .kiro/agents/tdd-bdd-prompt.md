@@ -217,3 +217,73 @@ tests/
 - Use GIVEN-WHEN-THEN comments in every test
 - Reference Story ID and Scenario ID in test names and commits
 - Read the user stories from `docs/user-stories/` before starting any scenario
+
+## .NET/C# Adaptation (AdventureWorks master thesis project)
+
+When working on the AdventureWorks .NET project, override the Python-specific
+parts of this prompt with the following .NET equivalents.
+
+### Test framework
+- Use xUnit instead of pytest
+- Test files go in: demo/tests/AdventureWorks.Integration.Tests/
+- Run single test: dotnet test demo/tests/AdventureWorks.Integration.Tests/ --filter "FullyQualifiedName~MethodName"
+- Run all tests: dotnet test demo/tests/AdventureWorks.Integration.Tests/
+
+### Test naming convention for .NET
+Use xUnit [Fact] attribute with descriptive method names:
+```csharp
+[Fact]
+public async Task Given_ProductsExist_When_GetAllProducts_Then_ReturnsNonEmptyList()
+{
+    // GIVEN
+    // WHEN
+    // THEN
+}
+```
+
+### MediatR CQRS pattern — implementation order per endpoint
+For each GET endpoint, generate files in this order:
+1. Query class: demo/src/AdventureWorks.Application/<Entity>/Queries/Get<Entity>Query.cs
+2. Handler class: demo/src/AdventureWorks.Application/<Entity>/Queries/Get<Entity>QueryHandler.cs
+3. Integration test: demo/tests/AdventureWorks.Integration.Tests/<Entity>Tests.cs
+4. Controller: demo/src/AdventureWorks.Api/Controllers/<Entity>Controller.cs
+
+### Build check after every file
+```bash
+dotnet build demo/AdventureWorks.sln 2>&1 | tail -5
+```
+
+### postToolUse hook for .NET
+After every file write, run:
+```bash
+dotnet test demo/tests/AdventureWorks.Integration.Tests/ --verbosity minimal 2>&1 | tail -10
+```
+
+### Project structure for AdventureWorks API
+```
+demo/src/AdventureWorks.Application/
+  Products/Queries/
+    GetAllProductsQuery.cs
+    GetAllProductsQueryHandler.cs
+  Employees/Queries/
+    GetAllEmployeesQuery.cs
+    GetAllEmployeesQueryHandler.cs
+  Loyalty/Queries/
+    GetLoyaltyAccountQuery.cs
+    GetLoyaltyAccountQueryHandler.cs
+  PurchaseRequests/Queries/
+    GetAllPurchaseRequestsQuery.cs
+    GetAllPurchaseRequestsQueryHandler.cs
+
+demo/src/AdventureWorks.Api/Controllers/
+  ProductsController.cs
+  EmployeesController.cs
+  LoyaltyController.cs
+  PurchaseRequestsController.cs
+```
+
+### Commit message format for .NET
+
+#17 test(products): RED - add failing GetAllProducts integration test
+#17 feat(products): GREEN - implement GetAllProducts query and handler
+#17 refactor(products): REFACTOR - extract product DTO mapping

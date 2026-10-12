@@ -76,6 +76,23 @@ ORDER BY tc.table_schema, tc.table_name;
 "
 ```
 
+For views that depend on a specific column (run before any DROP COLUMN):
+
+```
+PGPASSWORD=postgres psql -h localhost -p 5433 -U postgres -d Adventureworks -c "
+SELECT DISTINCT v.oid::regclass AS dependent_view
+FROM pg_depend d
+JOIN pg_rewrite r ON r.oid = d.objid
+JOIN pg_class v   ON v.oid = r.ev_class
+WHERE d.refobjid = '<schema>.<table>'::regclass
+  AND d.refobjsubid = (
+      SELECT attnum FROM pg_attribute
+      WHERE attrelid = '<schema>.<table>'::regclass
+        AND attname = '<column>')
+  AND v.oid <> '<schema>.<table>'::regclass;
+"
+```
+
 ## Change Classification
 
 Before generating anything, classify the change:
@@ -211,6 +228,11 @@ public partial class AlterExampleContractPhase : Migration
 - Phase 2 migration name: `Alter<Table>_<Column>_ContractPhase`
 - Never run Phase 2 without confirming Phase 1 data migration succeeded
 - If Phase 2 Down() runs, data in old column is lost — document this explicitly
+- Before writing a Contract phase that drops a column, run the
+  dependent-views query (see Read Schema Command) and list every
+  dependent object in the report.
+- Never use DROP ... CASCADE. Drop each dependent object explicitly,
+  then drop the column without CASCADE, then recreate the objects.
 
 ## Mermaid ER Diagram Template
 

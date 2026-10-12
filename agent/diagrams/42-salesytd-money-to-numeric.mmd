@@ -1,0 +1,48 @@
+erDiagram
+    %% Issue #42: Change sales.salesterritory.salesytd from numeric to numeric(19,4)
+    %% Expand-Contract: Phase 1 adds salesytd_new, Phase 2 drops salesytd and renames
+
+    SALES__SALESTERRITORY {
+        int territoryid PK
+        string name
+        string countryregioncode
+        string group
+        decimal salesytd "Phase 1: numeric (old); Phase 2: numeric(19,4) (new)"
+        decimal salesytd_new "Phase 1 only: numeric(19,4) nullable, copied from salesytd"
+        decimal saleslastyear
+        decimal costytd
+        decimal costlastyear
+        uuid rowguid
+        timestamp modifieddate
+    }
+
+    SALES__CUSTOMER {
+        int customerid PK
+        int territoryid FK
+    }
+
+    SALES__SALESORDERHEADER {
+        int salesorderid PK
+        int territoryid FK
+    }
+
+    SALES__SALESPERSON {
+        int businessentityid PK
+        int territoryid FK
+    }
+
+    SALES__SALESTERRITORYHISTORY {
+        int businessentityid PK
+        int territoryid PK
+    }
+
+    PERSON__STATEPROVINCE {
+        int stateprovinceid PK
+        int territoryid FK
+    }
+
+    SALES__SALESTERRITORY ||--o{ SALES__CUSTOMER : "has"
+    SALES__SALESTERRITORY ||--o{ SALES__SALESORDERHEADER : "covers"
+    SALES__SALESTERRITORY ||--o{ SALES__SALESPERSON : "assigned to"
+    SALES__SALESTERRITORY ||--o{ SALES__SALESTERRITORYHISTORY : "tracks"
+    SALES__SALESTERRITORY ||--o{ PERSON__STATEPROVINCE : "contains"

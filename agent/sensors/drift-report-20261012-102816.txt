@@ -1,0 +1,39 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-10-12 10:28:16
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: loyalty
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: person
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: production
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: purchasing
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: sales
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       6
+  Drift detected:      0
+
+  ✅ No drift detected — database matches arc42 documentation.
+=================================================================
