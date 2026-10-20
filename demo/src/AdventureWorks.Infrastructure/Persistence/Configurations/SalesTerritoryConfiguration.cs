@@ -61,6 +61,20 @@ public class SalesTerritoryConfiguration : IEntityTypeConfiguration<SalesTerrito
             .IsRequired()
             .HasDefaultValue(0m);
 
+        // Issue #44: Nullable FK to humanresources.employee(businessentityid)
+        builder.Property(st => st.ManagerId)
+            .HasColumnName("manager_id");
+
+        builder.HasOne(st => st.Manager)
+            .WithMany()
+            .HasForeignKey(st => st.ManagerId)
+            .HasConstraintName("FK_SalesTerritory_Employee_ManagerId")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Index on FK column per conventions
+        builder.HasIndex(st => st.ManagerId)
+            .HasDatabaseName("IX_salesterritory_manager_id");
+
         builder.Property(st => st.Rowguid)
             .HasColumnName("rowguid")
             .HasDefaultValueSql("uuid_generate_v1()")

@@ -1,0 +1,30 @@
+erDiagram
+    %% Issue #44: Add nullable manager_id FK to sales.salesterritory
+    %% referencing humanresources.employee(businessentityid)
+
+    SALES__SALESTERRITORY {
+        int territoryid PK
+        string name
+        string countryregioncode
+        string group
+        numeric salesytd
+        numeric saleslastyear
+        numeric costytd
+        numeric costlastyear
+        int manager_id FK "nullable"
+        uuid rowguid
+        timestamp modifieddate
+    }
+
+    HUMANRESOURCES__EMPLOYEE {
+        int businessentityid PK
+        string nationalidnumber
+        string loginid
+        string jobtitle
+        date birthdate
+        date hiredate
+        boolean salariedflag
+        boolean currentflag
+    }
+
+    HUMANRESOURCES__EMPLOYEE ||--o{ SALES__SALESTERRITORY : "manages"

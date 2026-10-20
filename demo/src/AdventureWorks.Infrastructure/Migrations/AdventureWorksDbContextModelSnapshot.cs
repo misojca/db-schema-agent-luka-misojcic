@@ -639,6 +639,10 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("group");
 
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("manager_id");
+
                     b.Property<DateTime>("ModifiedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
@@ -670,6 +674,9 @@ namespace AdventureWorks.Infrastructure.Migrations
 
                     b.HasKey("TerritoryId")
                         .HasName("PK_Sales_SalesTerritory");
+
+                    b.HasIndex("ManagerId")
+                        .HasDatabaseName("IX_salesterritory_manager_id");
 
                     b.ToTable("salesterritory", "sales", t =>
                         {
@@ -748,6 +755,17 @@ namespace AdventureWorks.Infrastructure.Migrations
                         {
                             t.ExcludeFromMigrations();
                         });
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.SalesTerritory", b =>
+                {
+                    b.HasOne("AdventureWorks.Domain.HumanResources.Entities.Employee", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_SalesTerritory_Employee_ManagerId");
+
+                    b.Navigation("Manager");
                 });
 #pragma warning restore 612, 618
         }

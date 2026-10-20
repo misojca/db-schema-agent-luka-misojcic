@@ -1,3 +1,5 @@
+using AdventureWorks.Domain.HumanResources.Entities;
+
 namespace AdventureWorks.Domain.Sales.Entities;
 
 public class SalesTerritory
@@ -11,6 +13,8 @@ public class SalesTerritory
     public decimal CostYtd { get; private set; }
     public decimal CostLastYear { get; private set; }
     public Guid Rowguid { get; private set; }
+    public int? ManagerId { get; private set; }
+    public Employee? Manager { get; private set; }
     public DateTime ModifiedDate { get; private set; }
 
     private SalesTerritory() { }
@@ -22,7 +26,8 @@ public class SalesTerritory
         decimal salesYtd = 0m,
         decimal salesLastYear = 0m,
         decimal costYtd = 0m,
-        decimal costLastYear = 0m)
+        decimal costLastYear = 0m,
+        int? managerId = null)
     {
         return new SalesTerritory
         {
@@ -33,6 +38,7 @@ public class SalesTerritory
             SalesLastYear = salesLastYear,
             CostYtd = costYtd,
             CostLastYear = costLastYear,
+            ManagerId = managerId,
             Rowguid = Guid.NewGuid(),
             ModifiedDate = DateTime.UtcNow
         };
