@@ -712,6 +712,7 @@
 | saleslastyear | numeric | NO |
 | costytd | numeric | NO |
 | costlastyear | numeric | NO |
+| manager_id | integer | YES |
 | rowguid | uuid | NO |
 | modifieddate | timestamp without time zone | NO |
 
