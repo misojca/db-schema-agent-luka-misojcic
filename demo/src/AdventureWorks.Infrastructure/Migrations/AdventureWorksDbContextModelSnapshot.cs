@@ -38,11 +38,11 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("currentflag");
 
-                    b.Property<short?>("CurrentPayFrequency")
+                    b.Property<short>("CurrentPayFrequency")
                         .HasColumnType("smallint")
                         .HasColumnName("currentpayfrequency");
 
-                    b.Property<decimal?>("CurrentPayRate")
+                    b.Property<decimal>("CurrentPayRate")
                         .HasColumnType("numeric")
                         .HasColumnName("currentpayrate");
 
@@ -85,7 +85,7 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("organizationnode");
 
-                    b.Property<DateTime?>("PayChangeDate")
+                    b.Property<DateTime>("PayChangeDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("paychangedate");
 

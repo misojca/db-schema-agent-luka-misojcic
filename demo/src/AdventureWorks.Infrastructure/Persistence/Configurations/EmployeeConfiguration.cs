@@ -9,6 +9,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
         // Table pre-existed in DB — excluded from migrations for baseline.
+        // Pay columns are added via hand-written expand-contract migrations.
         builder.ToTable("employee", "humanresources", t => t.ExcludeFromMigrations());
 
         builder.HasKey(e => e.BusinessEntityId)
@@ -91,17 +92,20 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasColumnType("character varying");
 
         // Issue #7 — Scenario 6: pay denormalisation columns.
-        // Nullable during Phase 1 expand; made NOT NULL in Phase 2 contract.
+        // NOT NULL after Phase 2 contract migration (data migrated from employeepayhistory).
         builder.Property(e => e.CurrentPayRate)
             .HasColumnName("currentpayrate")
-            .HasColumnType("numeric");
+            .HasColumnType("numeric")
+            .IsRequired();
 
         builder.Property(e => e.CurrentPayFrequency)
             .HasColumnName("currentpayfrequency")
-            .HasColumnType("smallint");
+            .HasColumnType("smallint")
+            .IsRequired();
 
         builder.Property(e => e.PayChangeDate)
             .HasColumnName("paychangedate")
-            .HasColumnType("timestamp without time zone");
+            .HasColumnType("timestamp without time zone")
+            .IsRequired();
     }
 }
