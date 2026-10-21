@@ -8,8 +8,8 @@ public class AddressDetailConfiguration : IEntityTypeConfiguration<AddressDetail
 {
     public void Configure(EntityTypeBuilder<AddressDetail> builder)
     {
-        // Table already exists in the database (created by an earlier migration).
-        // ExcludeFromMigrations prevents EF from re-emitting CREATE TABLE.
+        // Phase 2 (contract): table already created in Phase 1 migration.
+        // Exclude from migrations so EF doesn't try to recreate it.
         builder.ToTable("addressdetail", "person", t => t.ExcludeFromMigrations());
 
         // PK is also FK to person.address — one detail row per address (1:1)
@@ -20,7 +20,6 @@ public class AddressDetailConfiguration : IEntityTypeConfiguration<AddressDetail
             .HasColumnName("addressid")
             .ValueGeneratedNever(); // PK comes from address, not generated here
 
-        // Phase 1: nullable during data migration. Phase 2: all rows populated.
         builder.Property(d => d.SpatialLocation)
             .HasColumnName("spatiallocation")
             .HasColumnType("bytea");
@@ -31,7 +30,7 @@ public class AddressDetailConfiguration : IEntityTypeConfiguration<AddressDetail
             .IsRequired()
             .HasDefaultValueSql("now()");
 
-        // FK → person.address (cross-table within same schema)
-        // Enforced via PK reuse pattern; index not needed (PK is the index)
+        // FK → person.address is configured on the Address side (AddressConfiguration)
+        // to keep the one-to-one relationship with navigation property.
     }
 }

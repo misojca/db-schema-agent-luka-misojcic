@@ -41,11 +41,8 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasColumnType("character varying")
             .IsRequired();
 
-        // Issue #6 Phase 1: spatiallocation still on address during expand phase.
-        // Removed from this config in Phase 2 (contract).
-        builder.Property(a => a.SpatialLocation)
-            .HasColumnName("spatiallocation")
-            .HasColumnType("bytea");
+        // Issue #6 Phase 2 (contract): spatiallocation removed from Address entity.
+        // It now lives on AddressDetail (person.addressdetail table).
 
         builder.Property(a => a.Rowguid)
             .HasColumnName("rowguid")
@@ -57,6 +54,13 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasColumnType("timestamp without time zone")
             .IsRequired()
             .HasDefaultValueSql("now()");
+
+        // One-to-one navigation to AddressDetail (spatiallocation moved there)
+        builder.HasOne(a => a.AddressDetail)
+            .WithOne()
+            .HasForeignKey<AddressDetail>(d => d.AddressId)
+            .HasConstraintName("FK_AddressDetail_Address_AddressId")
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Index on FK from other tables referencing address
         builder.HasIndex(a => a.StateProvinceId)

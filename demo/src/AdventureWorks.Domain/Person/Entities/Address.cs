@@ -1,9 +1,11 @@
+using AdventureWorks.Domain.Person.Entities;
+
 namespace AdventureWorks.Domain.Person.Entities;
 
 /// <summary>
 /// Street address information for customers, employees, and vendors.
 /// Maps to person.address.
-/// Note: spatiallocation column is being moved to AddressDetail in issue #6 (Scenario 5).
+/// Issue #6 (Scenario 5): spatiallocation moved to person.addressdetail.
 /// </summary>
 public class Address
 {
@@ -14,12 +16,9 @@ public class Address
     public int StateProvinceId { get; set; }
     public string PostalCode { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Spatial location. Phase 1: still present on address.
-    /// Phase 2 (contract): this column is dropped after data migrated to addressdetail.
-    /// </summary>
-    public byte[]? SpatialLocation { get; set; }
-
     public Guid Rowguid { get; set; }
     public DateTime ModifiedDate { get; set; }
+
+    // Navigation: one-to-one with AddressDetail (spatiallocation moved here in issue #6)
+    public AddressDetail? AddressDetail { get; set; }
 }
