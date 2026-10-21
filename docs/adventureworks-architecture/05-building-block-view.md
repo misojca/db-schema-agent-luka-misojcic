@@ -69,7 +69,7 @@
 | modifieddate | timestamp without time zone | NO |
 
 
-## 5.2 Person Schema (13 tables)
+## 5.2 Person Schema (14 tables)
 
 ### address
 | Column Name | Data Type | Nullable |
@@ -80,8 +80,14 @@
 | city | character varying | NO |
 | stateprovinceid | integer | NO |
 | postalcode | character varying | NO |
-| spatiallocation | bytea | YES |
 | rowguid | uuid | NO |
+| modifieddate | timestamp without time zone | NO |
+
+### addressdetail
+| Column Name | Data Type | Nullable |
+|-------------|-----------|----------|
+| addressid | integer | NO |
+| spatiallocation | bytea | YES |
 | modifieddate | timestamp without time zone | NO |
 
 ### addresstype

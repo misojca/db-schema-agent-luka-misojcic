@@ -1,0 +1,40 @@
+erDiagram
+    PERSON__ADDRESS {
+        int addressid PK
+        string addressline1
+        string addressline2
+        string city
+        int stateprovinceid FK
+        string postalcode
+        uuid rowguid
+        timestamp modifieddate
+    }
+
+    PERSON__ADDRESSDETAIL {
+        int addressid PK,FK
+        bytea spatiallocation
+        timestamp modifieddate
+    }
+
+    PE__A {
+        int id
+        int addressid
+        string addressline1
+        string addressline2
+        string city
+        int stateprovinceid
+        string postalcode
+        uuid rowguid
+        timestamp modifieddate
+    }
+
+    PERSON__ADDRESS ||--|| PERSON__ADDRESSDETAIL : "has detail (1:1)"
+    PERSON__ADDRESS ||--o{ PE__A : "view selects from"
+
+%% Phase 1 (Expand): person.addressdetail created alongside person.address.
+%%   spatiallocation copied from person.address to person.addressdetail.
+%%   pe.a view still references person.address.spatiallocation.
+%%
+%% Phase 2 (Contract): person.address.spatiallocation dropped.
+%%   pe.a view recreated without spatiallocation.
+%%   person.addressdetail retains all spatiallocation data (19,614 rows).

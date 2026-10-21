@@ -207,10 +207,6 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasColumnName("rowguid")
                         .HasDefaultValueSql("uuid_generate_v1()");
 
-                    b.Property<byte[]>("SpatialLocation")
-                        .HasColumnType("bytea")
-                        .HasColumnName("spatiallocation");
-
                     b.Property<int>("StateProvinceId")
                         .HasColumnType("integer")
                         .HasColumnName("stateprovinceid");
@@ -757,6 +753,16 @@ namespace AdventureWorks.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AdventureWorks.Domain.Person.Entities.AddressDetail", b =>
+                {
+                    b.HasOne("AdventureWorks.Domain.Person.Entities.Address", null)
+                        .WithOne("AddressDetail")
+                        .HasForeignKey("AdventureWorks.Domain.Person.Entities.AddressDetail", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_AddressDetail_Address_AddressId");
+                });
+
             modelBuilder.Entity("AdventureWorks.Domain.Sales.Entities.SalesTerritory", b =>
                 {
                     b.HasOne("AdventureWorks.Domain.HumanResources.Entities.Employee", "Manager")
@@ -766,6 +772,11 @@ namespace AdventureWorks.Infrastructure.Migrations
                         .HasConstraintName("FK_SalesTerritory_Employee_ManagerId");
 
                     b.Navigation("Manager");
+                });
+
+            modelBuilder.Entity("AdventureWorks.Domain.Person.Entities.Address", b =>
+                {
+                    b.Navigation("AddressDetail");
                 });
 #pragma warning restore 612, 618
         }

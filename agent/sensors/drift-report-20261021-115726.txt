@@ -1,0 +1,43 @@
+=================================================================
+SCHEMA DRIFT REPORT
+Generated: 2026-10-21 11:57:26
+arc42 source: docs/adventureworks-architecture/05-building-block-view.md
+=================================================================
+
+SCHEMA: humanresources
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: loyalty
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: person
+----------------------------------------
+  ⚠️  TABLE DRIFT: 'addressdetail' exists in DB but NOT in arc42
+       Columns: addressid, spatiallocation, modifieddate
+  ❌ COLUMN MISSING: 'address.spatiallocation' in arc42 but NOT in database
+
+SCHEMA: production
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: purchasing
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+SCHEMA: sales
+----------------------------------------
+  ✅ OK — all documented tables and columns present
+
+=================================================================
+SUMMARY
+----------------------------------------
+  Schemas checked:     6
+  OK (no drift):       5
+  Drift detected:      2
+
+  ⚠️  2 drift(s) detected.
+     Consider updating arc42 Ch.5 or creating migrations.
+     Run Architecture agent to update documentation.
+=================================================================
