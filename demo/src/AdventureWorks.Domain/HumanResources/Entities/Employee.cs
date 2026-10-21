@@ -25,15 +25,15 @@ public class Employee
     public string? OrganizationNode { get; set; }
 
     // --- Issue #7: pay denormalisation columns ---
-    // Nullable during Phase 1 expand; made NOT NULL in Phase 2 contract
-    // after data migration from employeepayhistory.
+    // Populated from employeepayhistory via expand-contract migration.
+    // Made NOT NULL in Phase 2 contract after data migration.
 
     /// <summary>Most recent pay rate from employeepayhistory.rate.</summary>
-    public decimal? CurrentPayRate { get; set; }
+    public decimal CurrentPayRate { get; set; }
 
     /// <summary>Most recent pay frequency from employeepayhistory.payfrequency (1=monthly, 2=bi-weekly).</summary>
-    public short? CurrentPayFrequency { get; set; }
+    public short CurrentPayFrequency { get; set; }
 
     /// <summary>Date of the most recent pay change from employeepayhistory.ratechangedate.</summary>
-    public DateTime? PayChangeDate { get; set; }
+    public DateTime PayChangeDate { get; set; }
 }

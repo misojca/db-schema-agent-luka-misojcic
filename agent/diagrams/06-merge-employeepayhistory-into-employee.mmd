@@ -1,0 +1,31 @@
+erDiagram
+    HUMANRESOURCES__EMPLOYEE {
+        int businessentityid PK
+        string nationalidnumber
+        string loginid
+        string jobtitle
+        date birthdate
+        char maritalstatus
+        char gender
+        date hiredate
+        boolean salariedflag
+        smallint vacationhours
+        smallint sickleavehours
+        boolean currentflag
+        uuid rowguid
+        timestamp modifieddate
+        string organizationnode
+        numeric currentpayrate
+        smallint currentpayfrequency
+        timestamp paychangedate
+    }
+
+    HUMANRESOURCES__EMPLOYEEPAYHISTORY {
+        int businessentityid PK,FK
+        timestamp ratechangedate PK
+        numeric rate
+        smallint payfrequency
+        timestamp modifieddate
+    }
+
+    HUMANRESOURCES__EMPLOYEEPAYHISTORY }o--|| HUMANRESOURCES__EMPLOYEE : "latest record migrated to employee"

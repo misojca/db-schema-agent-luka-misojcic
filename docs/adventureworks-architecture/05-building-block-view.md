@@ -28,9 +28,9 @@
 | rowguid | uuid | NO |
 | modifieddate | timestamp without time zone | NO |
 | organizationnode | character varying | YES |
-| currentpayrate | numeric | YES |
-| currentpayfrequency | smallint | YES |
-| paychangedate | timestamp without time zone | YES |
+| currentpayrate | numeric | NO |
+| currentpayfrequency | smallint | NO |
+| paychangedate | timestamp without time zone | NO |
 
 ### employeedepartmenthistory
 | Column Name | Data Type | Nullable |
