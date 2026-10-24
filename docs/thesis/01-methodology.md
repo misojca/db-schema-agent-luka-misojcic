@@ -110,7 +110,7 @@ Prompt je inicijalno sadržao 4 TODO sekcije koje je trebalo eksplicitno popunit
 
 ## 4. Evaluacioni scenariji — pregled i tok
 
-Definisano je i sprovedeno 6 evaluacionih scenarija rastuće složenosti. Svaki scenario je sproveden kroz identičan Git workflow: GitHub Issue → feature grana → DB agent generiše kod i migraciju → round-trip test → commit → push/merge.
+Definisano je i sprovedeno 8 evaluacionih scenarija različite složenosti. Svaki scenario je sproveden kroz identičan Git workflow: GitHub Issue → feature grana → DB agent generiše kod i migraciju → round-trip test → commit → push/merge.
 
 | # | Tip promene | Složenost | Iteracije | Migracije | Round-trip |
 |---|---|---|---|---|---|
@@ -118,10 +118,10 @@ Definisano je i sprovedeno 6 evaluacionih scenarija rastuće složenosti. Svaki 
 | 2 | Dodavanje kolone sa default vrednošću | Osnovna | 1 | 1 | ✅ |
 | 3 | Promena tipa kolone (real → numeric) | Srednja | 1 | 2 (expand+contract) | ✅ |
 | 4 | Nova šema + cross-schema FK | Srednja | 1 | 1 | ✅ |
-| 5 | Splitting tabele (normalizacija) | Napredna | 1 | 2 (expand+contract) | ✅ |
-| 6 | Merge tabela (istorijski podaci sačuvani) | Napredna | 1 | 2 (expand+contract) | ✅ |
+| 5 | Splitting tabele (normalizacija) | Napredna | 2 | 2 (expand+contract) | ✅ |
+| 6 | Merge tabela (istorijski podaci sačuvani) | Napredna | 2 | 2 (expand+contract) | ✅ |
 
-Ukupno: 10 migracija generisano za prvih 8 scenarija. Correctness rate iz prve iteracije za prvih 6 scenarija iznosi **83%** (5/6). Dodavanjem Scenarija 7 i 8, koji su oba prošla iz prve iteracije, ukupni correctness rate raste na **87.5%** (7/8). Scenario 1 zahtevao je 2 iteracije zbog otkrivenog baseline problema — round-trip sensor je uhvatio grešku pre commit-a, što je dovelo do iterativnog poboljšanja prompta agenta. Svi round-trip testovi su na kraju prošli uspešno.
+Ukupno: 11 migracija generisano za 8 scenarija. Correctness rate iz prve iteracije iznosi **62.5%** (5/8). Scenario 1 zahtevao je 2 iteracije zbog otkrivenog baseline problema — round-trip sensor je uhvatio grešku pre commit-a, što je dovelo do iterativnog poboljšanja prompta agenta. Scenariji 5 i 6 ponovljeni su jer prvi pokušaji nisu ostavili ispravne migracije (PR #46 i PR #47). Svi round-trip testovi su na kraju prošli uspešno.
 
 ### 4.1 Scenario 1 — Mapiranje postojeće tabele purchaseorderdetail
 
@@ -157,13 +157,13 @@ Klasifikacija: Safe. Agent je generisao `EnsureSchema()`, `CreateTable()` sa cro
 
 Cilj: razdvojiti `person.address` na `person.address` (osnovni podaci) i `person.addressdetail` (prostorni podaci), eliminišući mešanje odgovornosti.
 
-Klasifikacija: Advanced/Risky — expand-contract sa data migration. Expand faza kreira novu tabelu i migrira `spatiallocation` podatke, contract faza uklanja kolonu iz originalne tabele. Uspostavljena one-to-one relacija. Round-trip test prošao iz prve.
+Klasifikacija: Advanced/Risky — expand-contract sa data migration. Expand faza kreira novu tabelu i migrira `spatiallocation` podatke, contract faza uklanja kolonu iz originalne tabele. Uspostavljena one-to-one relacija. Prvi pokušaj (PR #13) nije ostavio ispravne migracije u repozitorijumu, pa je scenario ponovljen (PR #46). U ponovljenom pokušaju agent je otkrio pogrešno `ExcludeFromMigrations()` na `addressdetail` i zavisni view `pe.a`, koji je obrisao i ponovo kreirao bez `CASCADE`. Round-trip test je prošao.
 
 ### 4.6 Scenario 6 — Merge tabela (employee + employeepayhistory)
 
-Cilj: denormalizacija — dodavanje kolona `currentpayrate`, `currentpayfrequency` i `paychangedate` direktno u `employee` tabelu, uz migraciju najnovijih podataka koristeći PostgreSQL DISTINCT ON sintaksu.
+Cilj: denormalizacija — dodavanje kolona `currentpayrate`, `currentpayfrequency` i `paychangedate` direktno u `employee` tabelu, uz migraciju najnovijih podataka iz `employeepayhistory`.
 
-Klasifikacija: Advanced. Za razliku od prethodnih scenarija, contract faza **nije obrisala** `employeepayhistory` tabelu — agent je doneo svesnu odluku da očuva istorijske podatke i umesto brisanja samo označio tabelu PostgreSQL komentarom kao read-only. Round-trip test prošao iz prve.
+Klasifikacija: Advanced. Za razliku od prethodnih scenarija, contract faza **nije obrisala** `employeepayhistory` tabelu — ona ostaje nepromenjena kao istorijski zapis. Expand faza dodaje tri kolone i popunjava ih podupitom nad `MAX(ratechangedate)`; contract faza postavlja `NOT NULL`. Prvi pokušaj nije ostavio ispravne migracije (pay kolone dodate su direktnim `ALTER TABLE`, videti 6.2), pa je polazno stanje resetovano (commit `a798ea5`) i scenario ponovljen (PR #47). Round-trip test je prošao.
 
 ---
 
@@ -198,7 +198,7 @@ Sproveden RED → GREEN → REFACTOR ciklus: napisan integration test korišćen
 
 ### 6.2 GET /api/employees
 
-Analogan ciklus za endpoint zaposlenih. Tokom GREEN faze TDD agent je sam dijagnostikovao i rešio problem — `ExcludeFromMigrations()` iz Scenarija 1 sprečio je primenu pay kolona iz Scenarija 6 na živu bazu. Agent je primenio direktan `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` i backfill-ovao 290 zaposlenih. Svih 8 testova prolazi.
+Analogan ciklus za endpoint zaposlenih. Tokom GREEN faze TDD agent je sam dijagnostikovao i rešio problem — `ExcludeFromMigrations()` iz Scenarija 1 sprečio je primenu pay kolona iz Scenarija 6 na živu bazu. Agent je primenio direktan `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` i backfill-ovao 290 zaposlenih. Svih 8 testova prolazi. Ovaj pristup je zaobišao migracije, pa su u ponovljenom scenariju 6 kolone uklonjene (commit `a798ea5`) i dodate kroz expand-contract migracije (PR #47).
 
 **Akademska napomena**: konkretan primer feedback loop-a unutar TDD agenta — otkriven i rešen pre-existing gap između EF modela i baze.
 
@@ -244,7 +244,7 @@ Git agent → commit i PR
 
 ## 7. Sumarni rezultati
 
-- **10 migracija** generisano kroz 8 scenarija, correctness rate **87.5%** iz prve iteracije (7/8 scenarija — Scenario 1 zahtevao 2 iteracije)
+- **11 migracija** generisano kroz 8 scenarija, correctness rate **62.5%** iz prve iteracije (5/8 scenarija — scenariji 1, 5 i 6 zahtevali su 2 iteracije)
 - Svi round-trip testovi (apply → rollback → re-apply) prošli uspešno
 - Zatvorena petlja schema drift senzora demonstrirana kroz 3 nezavisne akcije, 0 driftova nakon svake
 - **9 integration testova** prolazi za API sloj (GET /api/products, GET /api/employees, GET /api/loyalty/{customerId})

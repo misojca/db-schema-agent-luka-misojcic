@@ -11,7 +11,7 @@ Svaki scenario je evaluiran po pet dimenzija:
 | **Složenost** | Osnovna / Srednja / Napredna |
 | **Tokeni (credits)** | Credits koje Kiro CLI prijavljuje na kraju agentske sesije. Kiro CLI koristi termin *credits* kao internu meru potrošnje — nije direktno ekvivalentan broju LLM tokena, ali služi kao uporediva metrika između scenarija. |
 | **Iteracije do GREEN** | Broj pokretanja DB agenta za isti zadatak |
-| **Vreme (min)** | Ukupno vreme od zadatka do prolaska round-trip testa |
+| **Vreme (min)** | Trajanje Kiro CLI sesije DB agenta (vrednost `Time` koju Kiro prijavljuje na kraju sesije), od zadavanja zadatka do prolaska round-trip testa. Uključuje vreme čekanja na potvrde programera; gde je zabeleženo, navedeno je posebno. |
 | **Ljudske intervencije** | Broj ručnih akcija van agenta |
 
 ---
@@ -24,12 +24,12 @@ Svaki scenario je evaluiran po pet dimenzija:
 | 2 | Dodavanje kolone sa default vrednošću | Osnovna | 2.5 | 1 | 3:57 | 0 |
 | 3 | Promena tipa kolone (expand-contract) | Srednja | 3.80  | 1 | 6:17  | 0 |
 | 4 | Nova šema sa cross-schema FK | Srednja | 3.55  | 1 | 5:30 | 0 |
-| 5 | Splitting tabele (expand-contract + data migration) | Napredna | 5.10  | 1 | 6:11| 0 |
-| 6 | Merge tabela (istorijski podaci sačuvani) | Napredna | 4.60  | 1 |7:15 | 0 |
+| 5 | Splitting tabele (expand-contract + data migration) | Napredna | 6.57 | 2 | 40:54 | 0 |
+| 6 | Merge tabela (istorijski podaci sačuvani) | Napredna | 8.98 | 2 | 14:02 | 0 |
 | 7 | Dodavanje tabele purchasing.purchasereturn | Osnovna | 2.13| 1 | 4:43 | 0 |
 | 8 | Dodavanje kolone tier_expiry_date | Osnovna | 2.22 | 1 | 4:41 | 0 |
 
-
+**Napomena o scenarijima 5 i 6:** Prvi pokušaji nisu ostavili ispravne migracije u repozitorijumu (scenario 5: PR #13; scenario 6: pay kolone dodate direktnim `ALTER TABLE`, videti 6.1). Oba scenarija su ponovljena (PR #46 i PR #47) i računaju se kao 2 iteracije. Za scenario 6 polazno stanje je prethodno resetovano (commit `a798ea5`). Vreme scenarija 5 uključuje ~20 min čekanja na potvrde programera, a scenarija 6 ~3 min.
 
 ### Detaljniji prikaz za Scenario 7 i 8
 
@@ -42,6 +42,13 @@ Pored DB agenta, sledeći agenti su pokrenuti po scenariju:
 | Architecture agent (drift ispravka) | 0.32 credits, 41s | 0.23 credits, 31s |
 | **Ukupno po scenariju** | **~2.67 credits** | **~2.67 credits** |
 
+### Detaljniji prikaz za Scenario 5 i 6 (ponovljeni)
+
+| Agent | Scenario 5 | Scenario 6 |
+|---|---|---|
+| DB agent (glavni zadatak) | 6.57 credits, 40m 54s | 8.98 credits, 14m 02s |
+| Architecture agent (drift / nullability ispravka) | 0.71 credits, 53s | 1.26 credits, 1m 42s |
+
 ---
 
 ## 3. Correctness rate
@@ -49,13 +56,13 @@ Pored DB agenta, sledeći agenti su pokrenuti po scenariju:
 | Metrika | Vrednost |
 |---|---|
 | Ukupno scenarija | 8 |
-| Prošlo iz prve iteracije | 7 |
-| Zahtevalo 2+ iteracije | 1 (Scenario 1 — baseline problem) |
-| **Correctness rate iz prve iteracije** | **87.5%** |
-| Ukupno generisanih migracija | 10 |
-| Round-trip testovi prošli | 10 / 10 |
+| Prošlo iz prve iteracije | 5 |
+| Zahtevalo 2+ iteracije | 3 (Scenario 1 — baseline problem; Scenariji 5 i 6 — ponovljeni) |
+| **Correctness rate iz prve iteracije** | **62.5%** |
+| Ukupno generisanih migracija | 11 |
+| Round-trip testovi prošli | 11 / 11 |
 
-**Napomena:** Prvih 6 scenarija dalo je correctness rate od 83% (5/6). Dodavanjem Scenarija 7 i 8, koji su oba prošla iz prve iteracije, ukupni correctness rate raste na 87.5% (7/8).
+**Napomena:** Prvobitno izračunat correctness rate iznosio je 87.5% (7/8). Naknadnom proverom artefakata utvrđeno je da prvi pokušaji scenarija 5 i 6 nisu ostavili ispravne migracije u repozitorijumu. Oba scenarija su ponovljena (PR #46 i PR #47) i računaju se kao 2 iteracije, pa correctness rate iznosi 62.5% (5/8).
 
 ---
 
@@ -75,11 +82,11 @@ Kao referentna tačka, analizirana je ručna implementacija zadatka ekvivalentno
 | Ažuriranje arc42 dokumentacije | ~10 min |
 | **Ukupna procena ručne implementacije** | **~33 min** |
 
-DB agent je isti zadatak završio za **4 minute i 43 sekunde** — otprilike **7x brže** od procenjenog ručnog vremena.
+DB agent je isti zadatak završio za **4 minute i 43 sekunde** — odnos od otprilike **1:7** u odnosu na procenjeno ručno vreme.
 
 Za napredne scenarije (5 i 6), koji zahtevaju expand-contract obrazac sa data migration skriptama, ručna implementacija bi zahtevala dodatno vreme za:
 - Dizajn dvofazne migracione strategije (~10 min)
-- Pisanje ispravnog CAST i DISTINCT ON SQL-a (~10 min)
+- Pisanje ispravnog CAST SQL-a i agregatnog upita za poslednji zapis (~10 min)
 - Proveru integriteta podataka između faza (~5 min)
 
 Procenjeno ručno vreme za napredne scenarije: **45–60 minuta**.
@@ -97,8 +104,10 @@ Sensor `agent/sensors/drift-detector.py` pokrenut je nakon svake DB agent akcije
 | Brisanje kolone `notes` | 1 COLUMN MISSING | 0 driftova ✅ |
 | Dodavanje tabele `purchasereturn` (S7) | 1 TABLE DRIFT | 0 driftova ✅ |
 | Dodavanje kolone `tier_expiry_date` (S8) | 1 COLUMN DRIFT | 0 driftova ✅ |
+| Splitting `person.address` (S5) | 1 TABLE DRIFT + 1 COLUMN MISSING | 0 driftova ✅ |
+| Merge pay kolona u `employee` (S6) | 3 COLUMN MISSING (polazno stanje nakon reseta) | 0 driftova ✅ |
 
-U svakom slučaju, Architecture agent je rešio drift za manje od 45 sekundi.
+Architecture agent je u scenarijima 7 i 8 rešio drift za manje od 45 sekundi. U scenariju 6 pokrenut je ručno radi usklađivanja nullability oznaka, jer senzor poredi samo nazive tabela i kolona, a ne tip i nullability.
 
 ---
 
@@ -110,7 +119,7 @@ Uočena su dva slučaja autonomnog otkrivanja i rešavanja problema bez ljudske 
 
 **Baseline problem (Scenario 1):** Agent je pokušao da kreira tabelu `sales.customer` koja već postoji. Round-trip sensor je uhvatio grešku pre commit-a. Prompt agenta je poboljšan obaveznom proverom `__ef_migrations_history`. Druga iteracija je uspešno prošla bez intervencije.
 
-**EF model/baza gap (TDD faza, employees endpoint):** TDD agent je otkrio da `ExcludeFromMigrations()` sprečava primenu pay kolona na živu bazu. Agent je autonomno primenio `ALTER TABLE` i backfill-ovao 290 redova bez ljudske intervencije.
+**EF model/baza gap (TDD faza, employees endpoint):** TDD agent je otkrio da `ExcludeFromMigrations()` sprečava primenu pay kolona na živu bazu. Agent je autonomno primenio `ALTER TABLE` i backfill-ovao 290 redova bez ljudske intervencije. Ovaj pristup je zaobišao migracije: promena nije bila zabeležena u `__ef_migrations_history` ni u migracionim fajlovima. U ponovljenom scenariju 6 kolone su uklonjene (commit `a798ea5`) i dodate kroz expand-contract migracije.
 
 ### 6.2 Kontekstualno rasuđivanje
 
@@ -124,6 +133,12 @@ Agent je izvršio direktan DROP uz eksplicitno obrazloženje. Ovo demonstrira ko
 ### 6.3 Interakcija sa ExcludeFromMigrations()
 
 Uočen je obrazac koji se ponavlja: tabele označene sa `ExcludeFromMigrations()` stvaraju komplikacije kada treba dodati nove kolone. Agent je ispravno identifikovao i rešio ovo u Scenariju 8 uklanjanjem oznake sa `LoyaltyAccountConfiguration`, pošto je `loyaltyaccount` legitimno EF-owned tabela kreirana migracijom.
+
+### 6.4 Nalazi iz ponovljenih scenarija 5 i 6
+
+- **Scenario 5:** agent je otkrio zavisni view `pe.a` i obrisao ga i ponovo kreirao bez `CASCADE`; prebačeno je 19.614 redova. Na kraju je vratio `ExcludeFromMigrations()` na `addressdetail`, iako tu tabelu kreira migracija, što je u suprotnosti sa obrascem opisanim u 6.3.
+- **Scenario 6:** za poslednji zapis istorije korišćen je podupit sa `MAX(ratechangedate)`, a ne `DISTINCT ON`; contract faza postavlja `NOT NULL` bez default vrednosti; `employeepayhistory` je ostala nepromenjena.
+- **Architecture agent** nema kontekst konekcije (port, lozinka): upitao je pogrešan server (5432 umesto 5433) i zaglavio se na psql upitu za lozinku. Rezultat je naknadno proveren na bazi na portu 5433.
 
 ---
 
@@ -153,6 +168,4 @@ Ovaj rizik se materijalizovao u prvom pokušaju Scenarija 8 (originalni zadatak 
 
 **Rizik: Narušavanje granica odgovornosti između agenata**
 
-Tokom demonstracije multi-agent feedback loop-a (Issue #19), DB agent je implementirao `LoyaltyController` i Application sloj — što je posao TDD agenta. Preporučena mitigacija: strožija definicija opsega u promptu DB agenta — *DB agent piše isključivo u Domain/Entities/ i Infrastructure/Persistence/; ne sme da kreira niti menja Controllers ili Application layer fajlove.*# 02 — Evaluacija: Kvantitativne metrike i rezultati
-
-
+Tokom demonstracije multi-agent feedback loop-a (Issue #19), DB agent je implementirao `LoyaltyController` i Application sloj — što je posao TDD agenta. Preporučena mitigacija: strožija definicija opsega u promptu DB agenta — *DB agent piše isključivo u Domain/Entities/ i Infrastructure/Persistence/; ne sme da kreira niti menja Controllers ili Application layer fajlove.*
