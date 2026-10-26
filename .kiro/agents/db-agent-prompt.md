@@ -49,7 +49,7 @@ SELECT
     c.is_nullable,
     c.column_default
 FROM information_schema.columns c
-WHERE c.table_schema IN ('humanresources','person','production','purchasing','sales')
+WHERE c.table_schema IN ('humanresources','person','production','purchasing','sales','loyalty')
 ORDER BY c.table_schema, c.table_name, c.ordinal_position;
 "
 ```
@@ -71,7 +71,7 @@ JOIN information_schema.key_column_usage kcu
 JOIN information_schema.constraint_column_usage ccu
     ON tc.constraint_name = ccu.constraint_name
 WHERE tc.constraint_type = 'FOREIGN KEY'
-    AND tc.table_schema IN ('humanresources','person','production','purchasing','sales')
+    AND tc.table_schema IN ('humanresources','person','production','purchasing','sales','loyalty')
 ORDER BY tc.table_schema, tc.table_name;
 "
 ```
